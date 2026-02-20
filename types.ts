@@ -13,20 +13,20 @@ export interface Supplier {
 
 export interface CartItem extends Product {
   quantity: number;
+  addedAt?: number;
 }
 
 export interface Transaction {
-  id?: string;
+  id?: any;
   branchName: string;
-  branchname?: string; // API lowercase version
-  timestamp?: string;
+  branchname?: string;
   totalPrice: number;
-  totalprice?: number; // API lowercase version
-  items: any[]; // Flexible for both CartItem[] and {product_id, quantity}[]
-  detail_transaction?: any; // API alternative items field
-  isReturningCustomer?: boolean;
-  isreturningcustomer?: boolean; // API lowercase version
-  Isreturningcustomer?: boolean; // API specific casing for POST
+  totalprice?: number;
+  Isreturningcustomer: boolean;
+  isreturningcustomer?: boolean;
+  timestamp?: string;
+  items: any[];
+  detail_transaction?: any;
 }
 
 export interface DbConfig {
