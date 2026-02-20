@@ -1,0 +1,7 @@
+{
+  "name": "Lele Krispy POS",
+  "description": "Sebuah aplikasi Point of Sales (POS) sederhana yang mengambil data dari Google Sheets, mengelola keranjang belanja, dan mencatat riwayat transaksi.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
