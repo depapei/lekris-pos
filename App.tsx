@@ -339,7 +339,7 @@ const App: React.FC = () => {
             {view === "POS" && (
               <div className="space-y-6">
                 {activeTab === AppTab.PRODUCTS && (
-                  <div className="space-y-4">
+                  <div className="space-y-4 mb-20">
                     <input
                       type="text"
                       placeholder="Cari menu makanan..."
