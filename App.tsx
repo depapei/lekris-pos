@@ -50,6 +50,8 @@ const App: React.FC = () => {
   const [branch, setBranch] = useState("Pasar Segar");
   const [isOldCust, setIsOldCust] = useState(false);
   const [qProd, setQProd] = useState("");
+  const [qMgmtProd, setQMgmtProd] = useState("");
+  const [qMgmtSup, setQMgmtSup] = useState("");
 
   // Modals
   const [editProd, setEditProd] = useState<Product | null>(null);
@@ -378,7 +380,11 @@ const App: React.FC = () => {
                                         : i,
                                     ),
                                   );
-                                else setCart([...cart, { ...p, quantity: 1 }]);
+                                else
+                                  setCart([
+                                    ...cart,
+                                    { ...p, quantity: 1, addedAt: Date.now() },
+                                  ]);
                               }}
                               className="w-12 h-12 bg-gray-900 text-white rounded-2xl font-black text-xl shadow-lg"
                             >
@@ -430,56 +436,63 @@ const App: React.FC = () => {
                       </div>
                     ) : (
                       <div className="space-y-4">
-                        {cart.map((i) => (
-                          <div
-                            key={i.id}
-                            className="flex justify-between items-center bg-white p-5 rounded-xl border border-gray-100 shadow-sm"
-                          >
-                            <div>
-                              <p className="font-bold text-gray-800 text-xs uppercase">
-                                {i.item || "Tanpa Nama"}
-                              </p>
-                              <p className="text-[10px] font-medium text-gray-400">
-                                {formatRupiah(i.price || 0)}
-                              </p>
+                        {cart
+                          .sort((a, b) => (a.addedAt || 0) - (b.addedAt || 0))
+                          .map((i) => (
+                            <div
+                              key={i.id}
+                              className="flex justify-between items-center bg-white p-5 rounded-xl border border-gray-100 shadow-sm"
+                            >
+                              <div>
+                                <p className="font-bold text-gray-800 text-xs uppercase">
+                                  {i.item || "Tanpa Nama"}
+                                </p>
+                                <p className="text-[10px] font-medium text-gray-400">
+                                  {formatRupiah(i.price || 0)}
+                                </p>
+                              </div>
+                              <div className="flex items-center space-x-4">
+                                <button
+                                  onClick={() =>
+                                    i.quantity > 1
+                                      ? setCart(
+                                          cart.map((x) =>
+                                            x.id === i.id
+                                              ? {
+                                                  ...x,
+                                                  quantity: x.quantity - 1,
+                                                }
+                                              : x,
+                                          ),
+                                        )
+                                      : setCart(
+                                          cart.filter((x) => x.id !== i.id),
+                                        )
+                                  }
+                                  className="w-8 h-8 rounded-lg border border-gray-100 text-gray-400 font-bold"
+                                >
+                                  -
+                                </button>
+                                <span className="font-bold text-gray-700 w-4 text-center text-xs">
+                                  {i.quantity}
+                                </span>
+                                <button
+                                  onClick={() =>
+                                    setCart(
+                                      cart.map((x) =>
+                                        x.id === i.id
+                                          ? { ...x, quantity: x.quantity + 1 }
+                                          : x,
+                                      ),
+                                    )
+                                  }
+                                  className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 font-bold"
+                                >
+                                  +
+                                </button>
+                              </div>
                             </div>
-                            <div className="flex items-center space-x-4">
-                              <button
-                                onClick={() =>
-                                  i.quantity > 1
-                                    ? setCart(
-                                        cart.map((x) =>
-                                          x.id === i.id
-                                            ? { ...x, quantity: x.quantity - 1 }
-                                            : x,
-                                        ),
-                                      )
-                                    : setCart(cart.filter((x) => x.id !== i.id))
-                                }
-                                className="w-8 h-8 rounded-lg border border-gray-100 text-gray-400 font-bold"
-                              >
-                                -
-                              </button>
-                              <span className="font-bold text-gray-700 w-4 text-center text-xs">
-                                {i.quantity}
-                              </span>
-                              <button
-                                onClick={() =>
-                                  setCart(
-                                    cart.map((x) =>
-                                      x.id === i.id
-                                        ? { ...x, quantity: x.quantity + 1 }
-                                        : x,
-                                    ),
-                                  )
-                                }
-                                className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 font-bold"
-                              >
-                                +
-                              </button>
-                            </div>
-                          </div>
-                        ))}
+                          ))}
                         <div className="h-40"></div>{" "}
                         {/* Spacer for fixed footer */}
                       </div>
@@ -499,132 +512,160 @@ const App: React.FC = () => {
                           string,
                           Transaction[],
                         ][]
-                      ).map(([date, trxs]) => (
-                        <div key={date} className="space-y-4">
-                          <h2 className="text-[10px] font-black text-orange-600 uppercase tracking-widest sticky top-0 bg-white/95 backdrop-blur-md py-3 px-2 z-10 border-b border-gray-50">
-                            {date}
-                          </h2>
-                          {trxs.map((t) => (
-                            <div
-                              key={t.id}
-                              className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm relative overflow-hidden"
-                            >
-                              {(t.isreturningcustomer ||
-                                t.Isreturningcustomer) && (
-                                <span className="absolute top-0 right-0 bg-orange-600 text-white text-[8px] font-black px-4 py-2 rounded-bl-xl uppercase tracking-widest shadow-lg">
-                                  Pernah Beli Disini
-                                </span>
-                              )}
-                              <div className="flex justify-between items-start border-b border-gray-50 pb-4 mt-2 mb-4">
-                                <p className="font-bold text-gray-800 uppercase text-[10px] tracking-tight">
-                                  {t.branchname || t.branchName}
+                      ).map(([date, trxs]) => {
+                        const dailyTotal = trxs.reduce(
+                          (sum, t) => sum + (t.totalprice || t.totalPrice || 0),
+                          0,
+                        );
+                        return (
+                          <div key={date} className="space-y-4">
+                            <div className="sticky top-0 bg-white/95 backdrop-blur-md py-3 px-2 z-10 border-b border-gray-50 flex justify-between items-end">
+                              <h2 className="text-[10px] font-black text-orange-600 uppercase tracking-widest">
+                                {date}
+                              </h2>
+                              <div className="text-right">
+                                <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">
+                                  Total Hari Ini
                                 </p>
-                                <div className="text-right">
-                                  <p className="text-gray-900 font-black text-lg">
-                                    {formatRupiah(
-                                      t.totalprice || t.totalPrice || 0,
-                                    )}
-                                  </p>
-                                  <div className="flex justify-end space-x-4 mt-2">
-                                    <button
-                                      onClick={() => {
-                                        let rawItems =
-                                          t.detail_transaction || t.items;
-                                        let parsedItems = [];
-                                        try {
-                                          parsedItems =
-                                            typeof rawItems === "string"
-                                              ? JSON.parse(rawItems)
-                                              : rawItems;
-                                        } catch (e) {
-                                          parsedItems = [];
-                                        }
-
-                                        const normalizedItems = (
-                                          Array.isArray(parsedItems)
-                                            ? parsedItems
-                                            : []
-                                        ).map((i: any) => ({
-                                          product_id: i.product_id || i.id,
-                                          quantity: i.quantity || 0,
-                                          item: i.item || "Item",
-                                          price: i.price || 0,
-                                        }));
-
-                                        setEditTrx({
-                                          ...t,
-                                          branchName:
-                                            t.branchname || t.branchName,
-                                          totalPrice:
-                                            t.totalprice || t.totalPrice,
-                                          Isreturningcustomer:
-                                            t.isreturningcustomer ||
-                                            t.Isreturningcustomer,
-                                          items: normalizedItems,
-                                        });
-                                      }}
-                                      className="text-gray-300 hover:text-orange-600 transition-colors text-sm"
-                                    >
-                                      ✎
-                                    </button>
-                                    <button
-                                      onClick={async () => {
-                                        if (
-                                          confirm(
-                                            "Hapus riwayat transaksi ini?",
-                                          )
-                                        ) {
-                                          await api.api.transactions.delete(
-                                            t.id!,
-                                          );
-                                          init();
-                                        }
-                                      }}
-                                      className="text-gray-300 hover:text-red-600 transition-colors text-sm"
-                                    >
-                                      🗑
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="space-y-2">
-                                {(() => {
-                                  let rawItems =
-                                    t.detail_transaction || t.items;
-                                  let parsedItems = [];
-                                  try {
-                                    parsedItems =
-                                      typeof rawItems === "string"
-                                        ? JSON.parse(rawItems)
-                                        : rawItems;
-                                  } catch (e) {
-                                    console.error("Gagal parse items:", e);
-                                  }
-                                  return (
-                                    Array.isArray(parsedItems)
-                                      ? parsedItems
-                                      : []
-                                  ).map((i: any) => (
-                                    <p
-                                      key={i.id}
-                                      className="text-[11px] font-medium text-gray-500 flex justify-between"
-                                    >
-                                      <span>
-                                        {i.item || "Item"} × {i.quantity || 0}
-                                      </span>
-                                      <span className="text-gray-400">
-                                        {formatRupiah(
-                                          (i.price || 0) * (i.quantity || 0),
-                                        )}
-                                      </span>
-                                    </p>
-                                  ));
-                                })()}
+                                <p className="text-xs font-black text-gray-900">
+                                  {formatRupiah(dailyTotal)}
+                                </p>
                               </div>
                             </div>
-                          ))}
-                        </div>
-                      ))
+                            {trxs.map((t) => (
+                              <div
+                                key={t.id}
+                                className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm relative overflow-hidden"
+                              >
+                                {(t.isreturningcustomer ||
+                                  t.Isreturningcustomer) && (
+                                  <span className="absolute top-0 right-0 bg-orange-600 text-white text-[8px] font-black px-4 py-2 rounded-bl-xl uppercase tracking-widest shadow-lg">
+                                    Pernah Beli Disini
+                                  </span>
+                                )}
+                                <div className="flex justify-between items-start border-b border-gray-50 pb-4 mt-2 mb-4">
+                                  <div>
+                                    <p className="font-bold text-gray-800 uppercase text-[10px] tracking-tight">
+                                      {t.branchname || t.branchName}
+                                    </p>
+                                    <p className="text-[9px] font-bold text-gray-400 mt-1">
+                                      {t.timestamp
+                                        ? new Date(
+                                            t.timestamp,
+                                          ).toLocaleTimeString("id-ID", {
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                          })
+                                        : "--:--"}
+                                    </p>
+                                  </div>
+                                  <div className="text-right">
+                                    <p className="text-gray-900 font-black text-lg">
+                                      {formatRupiah(
+                                        t.totalprice || t.totalPrice || 0,
+                                      )}
+                                    </p>
+                                    <div className="flex justify-end space-x-4 mt-2">
+                                      <button
+                                        onClick={() => {
+                                          let rawItems =
+                                            t.detail_transaction || t.items;
+                                          let parsedItems = [];
+                                          try {
+                                            parsedItems =
+                                              typeof rawItems === "string"
+                                                ? JSON.parse(rawItems)
+                                                : rawItems;
+                                          } catch (e) {
+                                            parsedItems = [];
+                                          }
+
+                                          const normalizedItems = (
+                                            Array.isArray(parsedItems)
+                                              ? parsedItems
+                                              : []
+                                          ).map((i: any) => ({
+                                            product_id: i.product_id || i.id,
+                                            quantity: i.quantity || 0,
+                                            item: i.item || "Item",
+                                            price: i.price || 0,
+                                          }));
+
+                                          setEditTrx({
+                                            ...t,
+                                            branchName:
+                                              t.branchname || t.branchName,
+                                            totalPrice:
+                                              t.totalprice || t.totalPrice,
+                                            Isreturningcustomer:
+                                              t.isreturningcustomer ||
+                                              t.Isreturningcustomer,
+                                            items: normalizedItems,
+                                          });
+                                        }}
+                                        className="text-gray-300 hover:text-orange-600 transition-colors text-sm"
+                                      >
+                                        ✎
+                                      </button>
+                                      <button
+                                        onClick={async () => {
+                                          if (
+                                            confirm(
+                                              "Hapus riwayat transaksi ini?",
+                                            )
+                                          ) {
+                                            await api.api.transactions.delete(
+                                              t.id!,
+                                            );
+                                            init();
+                                          }
+                                        }}
+                                        className="text-gray-300 hover:text-red-600 transition-colors text-sm"
+                                      >
+                                        🗑
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="space-y-2">
+                                  {(() => {
+                                    let rawItems =
+                                      t.detail_transaction || t.items;
+                                    let parsedItems = [];
+                                    try {
+                                      parsedItems =
+                                        typeof rawItems === "string"
+                                          ? JSON.parse(rawItems)
+                                          : rawItems;
+                                    } catch (e) {
+                                      console.error("Gagal parse items:", e);
+                                    }
+                                    return (
+                                      Array.isArray(parsedItems)
+                                        ? parsedItems
+                                        : []
+                                    ).map((i: any) => (
+                                      <p
+                                        key={i.id}
+                                        className="text-[11px] font-medium text-gray-500 flex justify-between"
+                                      >
+                                        <span>
+                                          {i.item || "Item"} × {i.quantity || 0}
+                                        </span>
+                                        <span className="text-gray-400">
+                                          {formatRupiah(
+                                            (i.price || 0) * (i.quantity || 0),
+                                          )}
+                                        </span>
+                                      </p>
+                                    ));
+                                  })()}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      })
                     )}
                   </div>
                 )}
@@ -646,41 +687,56 @@ const App: React.FC = () => {
                     + Tambah
                   </button>
                 </div>
+                <div className="px-2">
+                  <input
+                    type="text"
+                    placeholder="Cari menu..."
+                    value={qMgmtProd}
+                    onChange={(e) => setQMgmtProd(e.target.value)}
+                    className="w-full p-4 bg-gray-50 rounded-xl border-none font-bold text-xs shadow-inner focus:ring-2 focus:ring-orange-500 transition-all"
+                  />
+                </div>
                 <div className="space-y-3">
-                  {products.map((p) => (
-                    <div
-                      key={p.id}
-                      className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center"
-                    >
-                      <div className="flex-1 pr-4">
-                        <h3 className="font-black text-gray-800 uppercase text-xs">
-                          {p.item || "Tanpa Nama"}
-                        </h3>
-                        <p className="text-orange-600 font-bold text-xs mt-1">
-                          {formatRupiah(p.price || 0)}
-                        </p>
+                  {products
+                    .filter((p) =>
+                      (p.item || "")
+                        .toLowerCase()
+                        .includes(qMgmtProd.toLowerCase()),
+                    )
+                    .map((p) => (
+                      <div
+                        key={p.id}
+                        className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center"
+                      >
+                        <div className="flex-1 pr-4">
+                          <h3 className="font-black text-gray-800 uppercase text-xs">
+                            {p.item || "Tanpa Nama"}
+                          </h3>
+                          <p className="text-orange-600 font-bold text-xs mt-1">
+                            {formatRupiah(p.price || 0)}
+                          </p>
+                        </div>
+                        <div className="flex space-x-1">
+                          <button
+                            onClick={() => setEditProd(p)}
+                            className="w-10 h-10 flex items-center justify-center bg-gray-50 text-gray-400 rounded-xl hover:text-orange-600 transition-colors"
+                          >
+                            ✎
+                          </button>
+                          <button
+                            onClick={async () => {
+                              if (confirm("Hapus menu ini?")) {
+                                await api.api.products.delete(p.id!);
+                                init();
+                              }
+                            }}
+                            className="w-10 h-10 flex items-center justify-center bg-gray-50 text-gray-400 rounded-xl hover:text-red-600 transition-colors"
+                          >
+                            🗑
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex space-x-1">
-                        <button
-                          onClick={() => setEditProd(p)}
-                          className="w-10 h-10 flex items-center justify-center bg-gray-50 text-gray-400 rounded-xl hover:text-orange-600 transition-colors"
-                        >
-                          ✎
-                        </button>
-                        <button
-                          onClick={async () => {
-                            if (confirm("Hapus menu ini?")) {
-                              await api.api.products.delete(p.id!);
-                              init();
-                            }
-                          }}
-                          className="w-10 h-10 flex items-center justify-center bg-gray-50 text-gray-400 rounded-xl hover:text-red-600 transition-colors"
-                        >
-                          🗑
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </div>
             )}
@@ -698,41 +754,56 @@ const App: React.FC = () => {
                     + Tambah
                   </button>
                 </div>
+                <div className="px-2">
+                  <input
+                    type="text"
+                    placeholder="Cari supply..."
+                    value={qMgmtSup}
+                    onChange={(e) => setQMgmtSup(e.target.value)}
+                    className="w-full p-4 bg-gray-50 rounded-xl border-none font-bold text-xs shadow-inner focus:ring-2 focus:ring-orange-500 transition-all"
+                  />
+                </div>
                 <div className="space-y-3">
-                  {suppliers.map((s) => (
-                    <div
-                      key={s.id}
-                      className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm border-l-4 border-l-orange-600 flex justify-between items-center"
-                    >
-                      <div>
-                        <h3 className="font-black text-gray-800 uppercase text-xs">
-                          {s.name}
-                        </h3>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">
-                          Satuan: {s.unit}
-                        </p>
+                  {suppliers
+                    .filter((s) =>
+                      (s.name || "")
+                        .toLowerCase()
+                        .includes(qMgmtSup.toLowerCase()),
+                    )
+                    .map((s) => (
+                      <div
+                        key={s.id}
+                        className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm border-l-4 border-l-orange-600 flex justify-between items-center"
+                      >
+                        <div>
+                          <h3 className="font-black text-gray-800 uppercase text-xs">
+                            {s.name}
+                          </h3>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">
+                            Satuan: {s.unit}
+                          </p>
+                        </div>
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => setEditSup(s)}
+                            className="p-3 text-gray-300 font-bold text-[10px] uppercase hover:text-orange-600"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={async () => {
+                              if (confirm("Hapus data supplier?")) {
+                                await api.api.suppliers.delete(s.id!);
+                                init();
+                              }
+                            }}
+                            className="p-3 text-gray-300 font-bold text-[10px] uppercase hover:text-red-600"
+                          >
+                            Hapus
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => setEditSup(s)}
-                          className="p-3 text-gray-300 font-bold text-[10px] uppercase hover:text-orange-600"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={async () => {
-                            if (confirm("Hapus data supplier?")) {
-                              await api.api.suppliers.delete(s.id!);
-                              init();
-                            }
-                          }}
-                          className="p-3 text-gray-300 font-bold text-[10px] uppercase hover:text-red-600"
-                        >
-                          Hapus
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </div>
             )}
