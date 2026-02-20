@@ -261,8 +261,8 @@ const App: React.FC = () => {
                 }}
                 className={`w-full text-left p-4 rounded-xl font-bold flex items-center space-x-4 transition-all ${view === "SUPPLIER_MGMT" ? "bg-orange-600 text-white shadow-lg" : "text-gray-500 hover:bg-gray-50"}`}
               >
-                <span>🚚</span>
-                <span>Data Supplier</span>
+                <span>📦</span>
+                <span>Data Supply</span>
               </button>
               <button
                 onClick={handleLogout}
@@ -512,10 +512,10 @@ const App: React.FC = () => {
                               {(t.isreturningcustomer ||
                                 t.Isreturningcustomer) && (
                                 <span className="absolute top-0 right-0 bg-orange-600 text-white text-[8px] font-black px-4 py-2 rounded-bl-xl uppercase tracking-widest shadow-lg">
-                                  Loyal
+                                  Pernah Beli Disini
                                 </span>
                               )}
-                              <div className="flex justify-between items-start border-b border-gray-50 pb-4 mb-4">
+                              <div className="flex justify-between items-start border-b border-gray-50 pb-4 mt-2 mb-4">
                                 <p className="font-bold text-gray-800 uppercase text-[10px] tracking-tight">
                                   {t.branchname || t.branchName}
                                 </p>
@@ -689,7 +689,7 @@ const App: React.FC = () => {
               <div className="space-y-6">
                 <div className="flex justify-between items-center px-2">
                   <h2 className="text-2xl font-black text-gray-800 uppercase italic tracking-tighter">
-                    Supplier Stok
+                    Supplies
                   </h2>
                   <button
                     onClick={() => setEditSup({ name: "", unit: "" })}
