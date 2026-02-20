@@ -519,7 +519,7 @@ const App: React.FC = () => {
                         );
                         return (
                           <div key={date} className="space-y-4">
-                            <div className="sticky top-0 bg-white/95 backdrop-blur-md py-3 px-2 z-10 border-b border-gray-50 flex justify-between items-end">
+                            <div className="sticky top-0 bg-white/5 backdrop-blur-md shadow-sm py-3 px-2 z-10 border-b border-gray-50 flex justify-between items-end">
                               <h2 className="text-[10px] font-black text-orange-600 uppercase tracking-widest">
                                 {date}
                               </h2>
