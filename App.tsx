@@ -436,6 +436,20 @@ const App: React.FC = () => {
                       </div>
                     ) : (
                       <div className="space-y-4">
+                        <div className="flex justify-between items-center px-2">
+                          <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                            Daftar Item
+                          </h3>
+                          <button
+                            onClick={() => {
+                              if (confirm("Hapus semua item di keranjang?"))
+                                setCart([]);
+                            }}
+                            className="text-[10px] font-black text-red-500 uppercase tracking-widest hover:text-red-700 transition-colors"
+                          >
+                            Hapus Semua
+                          </button>
+                        </div>
                         {cart
                           .sort((a, b) => (a.addedAt || 0) - (b.addedAt || 0))
                           .map((i) => (
