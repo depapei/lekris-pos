@@ -395,7 +395,7 @@ const App: React.FC = () => {
                     <div className="bg-gray-50 p-6 rounded-xl space-y-4">
                       <div className="space-y-1 px-1">
                         <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest">
-                          Cabang Pengiriman
+                          Cabang Pemesanan
                         </label>
                         <select
                           value={branch}
