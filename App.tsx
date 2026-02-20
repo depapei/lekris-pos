@@ -226,7 +226,7 @@ const App: React.FC = () => {
           >
             <div className="flex justify-between items-center mb-12">
               <h2 className="text-2xl font-black italic text-orange-600 tracking-tighter">
-                MANAJEMEN
+                Menu
               </h2>
               <button
                 onClick={() => setIsSidebar(false)}
