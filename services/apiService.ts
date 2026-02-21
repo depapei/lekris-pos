@@ -3,7 +3,7 @@ import { Product, Supplier, Transaction } from "../types";
 /**
  * REST API SERVICE
  */
-const BASE_URL = "http://localhost:8080/api";
+export const BASE_URL = "http://localhost:8080/api";
 
 const request = async (path: string, options: RequestInit = {}) => {
   try {

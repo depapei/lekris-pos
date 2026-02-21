@@ -714,28 +714,27 @@ const App: React.FC = () => {
                                           setLoadingProof(true);
                                           setPaymentProofUrl(null);
                                           try {
-                                            const config = JSON.parse(
-                                              localStorage.getItem(
-                                                "db_config",
-                                              ) || "{}",
-                                            );
+                                            const baseUrl = api.BASE_URL;
                                             const token =
                                               localStorage.getItem(
                                                 "auth_token",
                                               );
                                             const response = await fetch(
-                                              `${config.url}/transactions/payment-proof/${t.id}`,
+                                              `${baseUrl}/transactions/payment-proof/${t.id}/`,
                                               {
-                                                headers: { apikey: config.key },
+                                                headers: {
+                                                  Authorization: `Bearer ${token}`,
+                                                },
                                               },
                                             );
                                             if (response.ok) {
-                                              const data =
-                                                await response.json();
+                                              const blob =
+                                                await response.blob();
+                                              const objectUrl =
+                                                URL.createObjectURL(blob);
+                                              console.log(objectUrl);
                                               setPaymentProofUrl(
-                                                data.payment_proof ||
-                                                  data.url ||
-                                                  null,
+                                                objectUrl || null,
                                               );
                                             }
                                           } catch (e) {
@@ -1122,7 +1121,7 @@ const App: React.FC = () => {
                 </>
               )}
               {editTrx && (
-                <div className="space-y-5 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                <div className="space-y-5 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
                   <div className="space-y-2">
                     <label className="text-[9px] font-semibold text-gray-400 uppercase tracking-widest ml-2">
                       Daftar Item Belanja
