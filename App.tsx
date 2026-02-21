@@ -308,7 +308,7 @@ const App: React.FC = () => {
             </nav>
             <div className="mt-auto pt-6 border-t border-gray-100">
               <p className="text-[10px] text-gray-400 font-bold text-center">
-                DATABASE: lekris (Local)
+                Cihuy
               </p>
             </div>
           </div>
