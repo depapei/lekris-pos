@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   Product,
   CartItem,
@@ -39,6 +39,7 @@ const App: React.FC = () => {
   const [isSidebar, setIsSidebar] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const mainRef = useRef<HTMLDivElement>(null);
 
   // Data
   const [products, setProducts] = useState<Product[]>([]);
@@ -65,6 +66,14 @@ const App: React.FC = () => {
   );
   const [paymentProofUrl, setPaymentProofUrl] = useState<string | null>(null);
   const [loadingProof, setLoadingProof] = useState(false);
+
+  useEffect(() => {
+    if (mainRef.current) {
+      mainRef.current.scrollTo({
+        top: 0,
+      });
+    }
+  }, [activeTab]);
 
   const init = async () => {
     try {
@@ -338,7 +347,10 @@ const App: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-5 pb-40 scroll-smooth">
+      <main
+        className="flex-1 overflow-y-auto p-5 pb-40 scroll-smooth"
+        ref={mainRef}
+      >
         {loading ? (
           <div className="flex flex-col items-center justify-center h-full space-y-3">
             <div className="w-8 h-8 border-2 border-orange-200 border-t-orange-600 rounded-full animate-spin"></div>
