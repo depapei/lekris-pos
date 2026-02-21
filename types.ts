@@ -19,14 +19,10 @@ export interface CartItem extends Product {
 export interface Transaction {
   id?: any;
   branchName: string;
-  branchname?: string;
-  totalPrice: number;
-  totalprice?: number;
-  Isreturningcustomer: boolean;
-  isreturningcustomer?: boolean;
+  totalprice: number;
+  isReturningCustomer: boolean;
   timestamp?: string;
   items: any[];
-  detail_transaction?: any;
   payment_proof?: string;
   customerName?: string;
   createdBy?: number;
