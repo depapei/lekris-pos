@@ -52,11 +52,19 @@ const App: React.FC = () => {
   const [qProd, setQProd] = useState("");
   const [qMgmtProd, setQMgmtProd] = useState("");
   const [qMgmtSup, setQMgmtSup] = useState("");
+  const [filterDate, setFilterDate] = useState("");
+  const [paymentProof, setPaymentProof] = useState<string | null>(null);
+  const [customerName, setCustomerName] = useState("");
 
   // Modals
   const [editProd, setEditProd] = useState<Product | null>(null);
   const [editSup, setEditSup] = useState<Supplier | null>(null);
   const [editTrx, setEditTrx] = useState<Transaction | null>(null);
+  const [viewPaymentProof, setViewPaymentProof] = useState<Transaction | null>(
+    null,
+  );
+  const [paymentProofUrl, setPaymentProofUrl] = useState<string | null>(null);
+  const [loadingProof, setLoadingProof] = useState(false);
 
   const init = async () => {
     try {
@@ -108,6 +116,9 @@ const App: React.FC = () => {
         branchName: String(branch),
         totalPrice: Number(cart.reduce((s, i) => s + i.price * i.quantity, 0)),
         Isreturningcustomer: Boolean(isOldCust),
+        payment_proof: paymentProof || "",
+        customerName: customerName.trim(),
+        createdBy: Number(localStorage.getItem("auth_user_id") || 0),
         items: cart.map((i) => ({
           product_id: Number(i.id),
           quantity: Number(i.quantity),
@@ -116,6 +127,8 @@ const App: React.FC = () => {
       await api.api.transactions.insert(payload);
       setCart([]);
       setIsOldCust(false);
+      setPaymentProof(null);
+      setCustomerName("");
       await init();
       setActiveTab(AppTab.HISTORY);
     } catch (err: any) {
@@ -130,7 +143,11 @@ const App: React.FC = () => {
     const groups: { [k: string]: Transaction[] } = {};
     if (!Array.isArray(history)) return groups;
 
-    history.forEach((t) => {
+    const filtered = filterDate
+      ? history.filter((t) => t.timestamp && t.timestamp.startsWith(filterDate))
+      : history;
+
+    filtered.forEach((t) => {
       if (!t || !t.timestamp) return;
       const dateObj = new Date(t.timestamp);
       if (isNaN(dateObj.getTime())) return;
@@ -144,7 +161,7 @@ const App: React.FC = () => {
       groups[d].push(t);
     });
     return groups;
-  }, [history]);
+  }, [history, filterDate]);
 
   if (!isAuthenticated) {
     return (
@@ -188,6 +205,19 @@ const App: React.FC = () => {
               }
               className="w-full p-5 bg-gray-50 rounded-xl border-none font-bold text-sm focus:ring-2 focus:ring-orange-500 transition-all"
             />
+          </div>
+          <div className="space-y-1">
+            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">
+              Cabang
+            </label>
+            <select
+              value={branch}
+              onChange={(e) => setBranch(e.target.value)}
+              className="w-full p-5 bg-gray-50 rounded-xl border-none font-bold text-sm focus:ring-2 focus:ring-orange-500 transition-all"
+            >
+              <option>Pasar Segar</option>
+              <option>Pondok Jagung</option>
+            </select>
           </div>
           <button
             disabled={authLoading}
@@ -308,7 +338,7 @@ const App: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-5 pb-32">
+      <main className="flex-1 overflow-y-auto p-5 pb-40 scroll-smooth">
         {loading ? (
           <div className="flex flex-col items-center justify-center h-full space-y-3">
             <div className="w-8 h-8 border-2 border-orange-200 border-t-orange-600 rounded-full animate-spin"></div>
@@ -391,36 +421,120 @@ const App: React.FC = () => {
 
                 {activeTab === AppTab.CART && (
                   <div className="space-y-6">
-                    <div className="bg-gray-50 p-6 rounded-xl space-y-4">
-                      <div className="space-y-1 px-1">
-                        <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest">
-                          Cabang Pemesanan
-                        </label>
-                        <select
-                          value={branch}
-                          onChange={(e) => setBranch(e.target.value)}
-                          className="w-full p-4 rounded-xl border-none font-bold text-gray-700 bg-white shadow-sm focus:ring-2 focus:ring-orange-500"
-                        >
-                          <option>Pasar Segar</option>
-                          <option>Pondok Jagung</option>
-                        </select>
+                    {cart.length > 0 && (
+                      <div className="space-y-6">
+                        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+                          <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">
+                            Pembayaran QRIS
+                          </h3>
+                          <div className="relative aspect-square w-48 mx-auto bg-gray-50 rounded-2xl flex items-center justify-center overflow-hidden border-2 border-dashed border-gray-200">
+                            <img
+                              src="https://picsum.photos/seed/qris/400/400"
+                              alt="QRIS Dummy"
+                              className="w-full h-full object-cover opacity-50"
+                              referrerPolicy="no-referrer"
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest bg-white/80 px-3 py-1 rounded-full backdrop-blur-sm">
+                                QRIS DUMMY
+                              </span>
+                            </div>
+                          </div>
+                          <p className="text-[9px] text-center text-gray-400 font-bold uppercase tracking-widest">
+                            Silahkan scan QR di atas
+                          </p>
+                        </div>
+
+                        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+                          <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                            Upload Bukti Bayar
+                          </h3>
+                          <div className="relative">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  const reader = new FileReader();
+                                  reader.onloadend = () => {
+                                    setPaymentProof(reader.result as string);
+                                  };
+                                  reader.readAsDataURL(file);
+                                }
+                              }}
+                              className="hidden"
+                              id="payment-upload"
+                            />
+                            <label
+                              htmlFor="payment-upload"
+                              className="flex flex-col items-center justify-center w-full p-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 cursor-pointer hover:bg-gray-100 transition-all"
+                            >
+                              {paymentProof ? (
+                                <div className="space-y-4 text-center w-full">
+                                  <div className="w-full aspect-[4/3] rounded-xl overflow-hidden shadow-lg border-2 border-white">
+                                    <img
+                                      src={paymentProof}
+                                      alt="Bukti Bayar"
+                                      className="w-full h-full object-contain bg-gray-900"
+                                    />
+                                  </div>
+                                  <div className="flex items-center justify-center space-x-2">
+                                    <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                                    <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">
+                                      Berhasil Diupload
+                                    </p>
+                                  </div>
+                                  <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">
+                                    Klik untuk ganti foto
+                                  </p>
+                                </div>
+                              ) : (
+                                <div className="text-center space-y-2">
+                                  <span className="text-2xl">📸</span>
+                                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                    Klik untuk upload
+                                  </p>
+                                </div>
+                              )}
+                            </label>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center space-x-3 px-1">
-                        <input
-                          type="checkbox"
-                          id="oc"
-                          checked={isOldCust}
-                          onChange={(e) => setIsOldCust(e.target.checked)}
-                          className="w-5 h-5 text-orange-600 rounded-md focus:ring-orange-500 border-none bg-white shadow-sm"
-                        />
-                        <label
-                          htmlFor="oc"
-                          className="text-xs font-bold text-gray-600"
-                        >
-                          Pernah beli disini
-                        </label>
+                    )}
+
+                    <div className="bg-gray-50 p-6 rounded-xl space-y-4">
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                            Nama Customer (Opsional)
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Masukkan nama customer..."
+                            value={customerName}
+                            onChange={(e) => setCustomerName(e.target.value)}
+                            className="w-full p-4 bg-white rounded-xl border-none font-bold text-xs shadow-sm focus:ring-2 focus:ring-orange-500 transition-all"
+                          />
+                        </div>
+                        <div className="flex items-center space-x-3 px-1">
+                          <input
+                            type="checkbox"
+                            id="oc"
+                            checked={isOldCust}
+                            onChange={(e) => setIsOldCust(e.target.checked)}
+                            className="w-5 h-5 text-orange-600 rounded-md focus:ring-orange-500 border-none bg-white shadow-sm"
+                          />
+                          <label
+                            htmlFor="oc"
+                            className="text-xs font-bold text-gray-600"
+                          >
+                            Pernah beli disini
+                          </label>
+                        </div>
                       </div>
                     </div>
+
                     {cart.length === 0 ? (
                       <div className="py-20 text-center space-y-4">
                         <p className="text-gray-300 font-bold italic text-sm">
@@ -500,18 +614,42 @@ const App: React.FC = () => {
                               </div>
                             </div>
                           ))}
-                        <div className="h-40"></div>{" "}
-                        {/* Spacer for fixed footer */}
+                        <div className="h-80"></div>{" "}
+                        {/* Extra large spacer at the very end to ensure scrollability */}
                       </div>
                     )}
                   </div>
                 )}
 
                 {activeTab === AppTab.HISTORY && (
-                  <div className="space-y-8">
-                    {history.length === 0 ? (
+                  <div className="space-y-6">
+                    <div className="px-2">
+                      <div className="flex justify-between items-center mb-2">
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                          Filter Tanggal
+                        </label>
+                        {filterDate && (
+                          <button
+                            onClick={() => setFilterDate("")}
+                            className="text-[10px] font-bold text-orange-600 uppercase tracking-widest"
+                          >
+                            Reset
+                          </button>
+                        )}
+                      </div>
+                      <input
+                        type="date"
+                        value={filterDate}
+                        onChange={(e) => setFilterDate(e.target.value)}
+                        className="w-full p-4 bg-gray-50 rounded-xl border-none font-bold text-xs shadow-inner focus:ring-2 focus:ring-orange-500 transition-all"
+                      />
+                    </div>
+
+                    {Object.keys(groupedHistory).length === 0 ? (
                       <p className="text-center text-gray-300 py-20 italic font-bold">
-                        Belum ada riwayat hari ini
+                        {filterDate
+                          ? "Tidak ada transaksi pada tanggal ini"
+                          : "Belum ada riwayat hari ini"}
                       </p>
                     ) : (
                       (
@@ -573,6 +711,43 @@ const App: React.FC = () => {
                                       )}
                                     </p>
                                     <div className="flex justify-end space-x-4 mt-2">
+                                      <button
+                                        onClick={async () => {
+                                          setViewPaymentProof(t);
+                                          setLoadingProof(true);
+                                          setPaymentProofUrl(null);
+                                          try {
+                                            const config = JSON.parse(
+                                              localStorage.getItem(
+                                                "db_config",
+                                              ) || "{}",
+                                            );
+                                            const response = await fetch(
+                                              `${config.url}/transactions/payment-proof/${t.id}`,
+                                              {
+                                                headers: { apikey: config.key },
+                                              },
+                                            );
+                                            if (response.ok) {
+                                              const data =
+                                                await response.json();
+                                              setPaymentProofUrl(
+                                                data.payment_proof ||
+                                                  data.url ||
+                                                  null,
+                                              );
+                                            }
+                                          } catch (e) {
+                                            console.error(e);
+                                          } finally {
+                                            setLoadingProof(false);
+                                          }
+                                        }}
+                                        className="text-gray-300 hover:text-orange-600 transition-colors text-sm flex items-center space-x-1"
+                                        title="Lihat Bukti Pembayaran"
+                                      >
+                                        <span>📸</span>
+                                      </button>
                                       <button
                                         onClick={() => {
                                           let rawItems =
@@ -823,7 +998,7 @@ const App: React.FC = () => {
         <div className="fixed inset-0 bg-gray-900/80 z-[110] flex items-end sm:items-center justify-center pt-safe backdrop-blur-md px-4">
           <div className="bg-white w-full max-w-sm rounded-xl p-10 space-y-8 shadow-2xl animate-in slide-in-from-bottom duration-300 mb-safe">
             <h3 className="text-xl font-black text-gray-900 uppercase italic tracking-tighter">
-              Isi Formulir Data
+              {editTrx ? "Edit Transaksi" : "Isi Formulir Data"}
             </h3>
             <form
               onSubmit={async (e) => {
@@ -831,16 +1006,21 @@ const App: React.FC = () => {
                 if (editProd) await api.api.products.save(editProd);
                 if (editSup) await api.api.suppliers.save(editSup);
                 if (editTrx) {
-                  const finalPayload = {
+                  const finalPayload: any = {
                     ...editTrx,
                     branchName: editTrx.branchName,
                     totalPrice: editTrx.totalPrice,
                     Isreturningcustomer: editTrx.Isreturningcustomer,
+                    customerName: editTrx.customerName,
+                    updatedBy: Number(
+                      localStorage.getItem("auth_user_id") || 0,
+                    ),
                     items: editTrx.items.map((i) => ({
                       product_id: Number(i.product_id),
                       quantity: Number(i.quantity),
                     })),
                   };
+                  delete finalPayload.createdBy;
                   await api.api.transactions.save(finalPayload);
                 }
                 setEditProd(null);
@@ -850,6 +1030,44 @@ const App: React.FC = () => {
               }}
               className="space-y-5"
             >
+              {editTrx && (
+                <div className="space-y-4 mb-4">
+                  <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                    <input
+                      type="checkbox"
+                      id="edit-oc-top"
+                      checked={editTrx.Isreturningcustomer}
+                      onChange={(e) =>
+                        setEditTrx({
+                          ...editTrx,
+                          Isreturningcustomer: e.target.checked,
+                        })
+                      }
+                      className="w-5 h-5 text-orange-600 rounded-md focus:ring-orange-500 border-none bg-white shadow-sm"
+                    />
+                    <label
+                      htmlFor="edit-oc-top"
+                      className="text-xs font-bold text-gray-600"
+                    >
+                      Pernah beli disini
+                    </label>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-2">
+                      Nama Customer
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Nama customer..."
+                      value={editTrx.customerName || ""}
+                      onChange={(e) =>
+                        setEditTrx({ ...editTrx, customerName: e.target.value })
+                      }
+                      className="w-full p-5 bg-gray-50 rounded-xl border-none font-bold text-xs"
+                    />
+                  </div>
+                </div>
+              )}
               {editProd && (
                 <>
                   <input
@@ -909,26 +1127,6 @@ const App: React.FC = () => {
               )}
               {editTrx && (
                 <div className="space-y-5 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
-                  <div className="space-y-1">
-                    <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-2">
-                      Cabang
-                    </label>
-                    <select
-                      value={editTrx.branchName || editTrx.branchname}
-                      onChange={(e) =>
-                        setEditTrx({
-                          ...editTrx,
-                          branchName: e.target.value,
-                          branchname: e.target.value,
-                        })
-                      }
-                      className="w-full p-4 rounded-xl border-none font-bold text-gray-700 bg-gray-50 shadow-sm focus:ring-2 focus:ring-orange-500 text-xs"
-                    >
-                      <option>Pasar Segar</option>
-                      <option>Pondok Jagung</option>
-                    </select>
-                  </div>
-
                   <div className="space-y-2">
                     <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-2">
                       Daftar Item Belanja
@@ -995,48 +1193,66 @@ const App: React.FC = () => {
                         </div>
                       ))}
 
-                      <select
-                        className="w-full p-4 bg-gray-100 rounded-xl border-none font-bold text-[10px] text-gray-500 uppercase tracking-widest"
-                        onChange={(e) => {
-                          const prodId = e.target.value;
-                          if (!prodId) return;
-                          const prod = products.find(
-                            (p) => String(p.id) === prodId,
-                          );
-                          if (!prod) return;
-
-                          const newItems = [...editTrx.items];
-                          const existing = newItems.find(
-                            (i) => String(i.product_id) === prodId,
-                          );
-                          if (existing) {
-                            existing.quantity++;
-                          } else {
-                            newItems.push({
-                              product_id: prod.id,
-                              quantity: 1,
-                              item: prod.item,
-                              price: prod.price,
-                            });
-                          }
-                          setEditTrx({
-                            ...editTrx,
-                            items: newItems,
-                            totalPrice: newItems.reduce(
-                              (s, i) => s + i.price * i.quantity,
-                              0,
-                            ),
-                          });
-                          e.target.value = "";
-                        }}
-                      >
-                        <option value="">+ Tambah Menu Lain</option>
-                        {products.map((p) => (
-                          <option key={p.id} value={p.id}>
-                            {p.item} ({formatRupiah(p.price)})
-                          </option>
-                        ))}
-                      </select>
+                      <div className="space-y-3 pt-4 border-t border-gray-100">
+                        <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-2">
+                          Tambah Menu Lain
+                        </label>
+                        <div className="space-y-2">
+                          {products
+                            .filter(
+                              (p) =>
+                                !editTrx.items.some(
+                                  (i) => String(i.product_id) === String(p.id),
+                                ),
+                            )
+                            .map((p) => (
+                              <button
+                                key={p.id}
+                                type="button"
+                                onClick={() => {
+                                  const newItems = [...editTrx.items];
+                                  newItems.push({
+                                    product_id: p.id,
+                                    quantity: 1,
+                                    item: p.item,
+                                    price: p.price,
+                                  });
+                                  setEditTrx({
+                                    ...editTrx,
+                                    items: newItems,
+                                    totalPrice: newItems.reduce(
+                                      (s, i) => s + i.price * i.quantity,
+                                      0,
+                                    ),
+                                  });
+                                }}
+                                className="w-full flex justify-between items-center bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:border-orange-200 transition-all text-left group"
+                              >
+                                <div className="flex-1">
+                                  <p className="text-[10px] font-black text-gray-800 uppercase leading-none mb-1 group-hover:text-orange-600 transition-colors">
+                                    {p.item}
+                                  </p>
+                                  <p className="text-[9px] font-bold text-gray-400">
+                                    {formatRupiah(p.price)}
+                                  </p>
+                                </div>
+                                <div className="w-7 h-7 bg-orange-50 rounded-lg flex items-center justify-center text-orange-600 font-black text-lg">
+                                  +
+                                </div>
+                              </button>
+                            ))}
+                          {products.filter(
+                            (p) =>
+                              !editTrx.items.some(
+                                (i) => String(i.product_id) === String(p.id),
+                              ),
+                          ).length === 0 && (
+                            <p className="text-[9px] text-center text-gray-300 font-bold italic uppercase py-4">
+                              Semua menu sudah ditambahkan
+                            </p>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -1048,30 +1264,6 @@ const App: React.FC = () => {
                       <span className="text-xl font-black text-orange-600">
                         {formatRupiah(editTrx.totalPrice || editTrx.totalprice)}
                       </span>
-                    </div>
-                    <div className="flex items-center space-x-3 px-2">
-                      <input
-                        type="checkbox"
-                        id="edit-oc"
-                        checked={
-                          editTrx.Isreturningcustomer ||
-                          editTrx.isreturningcustomer
-                        }
-                        onChange={(e) =>
-                          setEditTrx({
-                            ...editTrx,
-                            Isreturningcustomer: e.target.checked,
-                            isreturningcustomer: e.target.checked,
-                          })
-                        }
-                        className="w-5 h-5 text-orange-600 rounded-md focus:ring-orange-500 border-none bg-white shadow-sm"
-                      />
-                      <label
-                        htmlFor="edit-oc"
-                        className="text-xs font-bold text-gray-600"
-                      >
-                        Pernah beli disini
-                      </label>
                     </div>
                   </div>
                 </div>
@@ -1102,10 +1294,10 @@ const App: React.FC = () => {
 
       {/* Floating Cart Summary for POS */}
       {view === "POS" && activeTab === AppTab.PRODUCTS && cart.length > 0 && (
-        <div className="fixed bottom-28 left-0 right-0 max-w-md mx-auto px-6 z-[40] animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div className="fixed bottom-28 left-0 right-0 max-w-md mx-auto px-6 z-[40] pointer-events-none">
           <button
             onClick={() => setActiveTab(AppTab.CART)}
-            className="w-full bg-gray-900 text-white p-5 rounded-xl shadow-2xl flex justify-between items-center group active:scale-95 transition-all border border-white/10"
+            className="w-full bg-gray-900 text-white p-5 rounded-xl shadow-2xl flex justify-between items-center group active:scale-95 transition-all border border-white/10 pointer-events-auto animate-in fade-in slide-in-from-bottom-4 duration-300"
           >
             <div className="flex items-center space-x-4">
               <div className="bg-orange-600 text-white text-[10px] font-black w-7 h-7 rounded-lg flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
@@ -1133,8 +1325,8 @@ const App: React.FC = () => {
 
       {/* Floating Checkout Bar for CART Tab */}
       {view === "POS" && activeTab === AppTab.CART && cart.length > 0 && (
-        <div className="fixed bottom-28 left-0 right-0 max-w-md mx-auto px-6 z-[40] animate-in fade-in slide-in-from-bottom-4 duration-300">
-          <div className="bg-orange-600 p-6 rounded-xl text-white shadow-2xl border border-white/20">
+        <div className="fixed bottom-28 left-0 right-0 max-w-md mx-auto px-6 z-[40] pointer-events-none">
+          <div className="bg-orange-600 p-6 rounded-xl text-white shadow-2xl border border-white/20 pointer-events-auto animate-in fade-in slide-in-from-bottom-4 duration-300">
             <div className="flex justify-between items-center mb-4">
               <div className="flex flex-col">
                 <span className="text-[9px] font-bold uppercase opacity-70 tracking-widest">
@@ -1154,10 +1346,71 @@ const App: React.FC = () => {
             </div>
             <button
               onClick={handleCheckout}
-              disabled={loading}
+              disabled={loading || !paymentProof}
               className="w-full py-4 bg-gray-900 text-white rounded-xl font-black uppercase tracking-widest text-xs active:scale-95 transition-all shadow-xl disabled:opacity-50"
             >
-              {loading ? "Memproses..." : "Konfirmasi & Bayar"}
+              {loading
+                ? "Memproses..."
+                : !paymentProof
+                  ? "Upload Bukti Bayar"
+                  : "Konfirmasi & Bayar"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Payment Proof Modal */}
+      {viewPaymentProof && (
+        <div className="fixed inset-0 bg-gray-900/80 z-[120] flex items-center justify-center backdrop-blur-md px-4">
+          <div className="bg-white w-full max-w-sm rounded-2xl p-8 space-y-6 shadow-2xl animate-in zoom-in duration-300">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-black text-gray-900 uppercase italic tracking-tighter">
+                Bukti Pembayaran{" "}
+                {viewPaymentProof.customerName
+                  ? `+ ${viewPaymentProof.customerName}`
+                  : ""}
+              </h3>
+              <button
+                onClick={() => {
+                  setViewPaymentProof(null);
+                  setPaymentProofUrl(null);
+                }}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="aspect-[3/4] w-full bg-gray-100 rounded-xl overflow-hidden shadow-inner flex items-center justify-center relative">
+              {loadingProof ? (
+                <div className="flex flex-col items-center space-y-3">
+                  <div className="w-8 h-8 border-4 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                    Memuat...
+                  </p>
+                </div>
+              ) : paymentProofUrl ? (
+                <img
+                  src={paymentProofUrl}
+                  alt="Bukti Bayar"
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                <div className="text-center space-y-2">
+                  <span className="text-3xl">🚫</span>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                    Tidak ada bukti bayar
+                  </p>
+                </div>
+              )}
+            </div>
+            <button
+              onClick={() => {
+                setViewPaymentProof(null);
+                setPaymentProofUrl(null);
+              }}
+              className="w-full p-4 bg-gray-900 text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg active:scale-95 transition-all"
+            >
+              Tutup
             </button>
           </div>
         </div>
@@ -1165,7 +1418,7 @@ const App: React.FC = () => {
 
       {/* Main Tabs */}
       {view === "POS" && (
-        <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/95 backdrop-blur-md border-t border-gray-50 flex justify-around items-center px-4 min-h-safe pb-safe z-50 rounded-t-xl shadow-[0_-15px_40px_rgba(0,0,0,0.06)]">
+        <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/95 backdrop-blur-md border-t border-gray-50 flex justify-around items-center px-4 min-h-safe pb-safe z-50 rounded-t-xl shadow-[0_-15px_40px_rgba(0,0,0,0.06)] pointer-events-auto">
           <TabButton
             active={activeTab === AppTab.PRODUCTS}
             label="Menu"

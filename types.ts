@@ -27,6 +27,10 @@ export interface Transaction {
   timestamp?: string;
   items: any[];
   detail_transaction?: any;
+  payment_proof?: string;
+  customerName?: string;
+  createdBy?: number;
+  updatedBy?: number;
 }
 
 export interface DbConfig {

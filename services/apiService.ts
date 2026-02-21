@@ -54,12 +54,17 @@ export const auth = {
     if (res.Token) {
       localStorage.setItem("auth_token", res.Token);
       localStorage.setItem("auth_user", res.Username);
+      const userId = res.Id || res.id || res.UserID || res.userid;
+      if (userId) {
+        localStorage.setItem("auth_user_id", String(userId));
+      }
     }
     return res;
   },
   logout: () => {
     localStorage.removeItem("auth_token");
     localStorage.removeItem("auth_user");
+    localStorage.removeItem("auth_user_id");
     window.location.reload();
   },
   isAuthenticated: () => !!localStorage.getItem("auth_token"),
