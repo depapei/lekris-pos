@@ -1363,7 +1363,7 @@ const App: React.FC = () => {
               <h3 className="text-lg font-semibold text-gray-900 uppercase italic tracking-tighter">
                 Bukti Pembayaran{" "}
                 {viewPaymentProof.customerName
-                  ? `+ ${viewPaymentProof.customerName}`
+                  ? `${viewPaymentProof.customerName}`
                   : ""}
               </h3>
               <button
