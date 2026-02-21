@@ -388,6 +388,9 @@ const App: React.FC = () => {
                               <h3 className="font-semibold text-gray-800 uppercase text-xs tracking-tighter">
                                 {p.item || "Tanpa Nama"}
                               </h3>
+                              <p className="font-semibold text-gray-600 uppercase text-[10px] tracking-tighter">
+                                {p.description || ""}
+                              </p>
                               <p className="text-orange-600 font-bold text-xs mt-1">
                                 {formatRupiah(p.price || 0)}
                               </p>
@@ -411,7 +414,7 @@ const App: React.FC = () => {
                               }}
                               className="w-fit p-3 bg-gray-900 text-white rounded-lg font-semibold text-xs shadow-lg"
                             >
-                              Tambahkan +
+                              Tambahkan
                             </button>
                           </div>
                         ))}
@@ -691,6 +694,9 @@ const App: React.FC = () => {
                                   <div>
                                     <p className="font-bold text-gray-800 uppercase text-[10px] tracking-tight">
                                       {t.branchName}
+                                    </p>
+                                    <p className="font-bold text-gray-400 uppercase text-[10px] tracking-tight">
+                                      {t.customerName}
                                     </p>
                                     <p className="text-[9px] font-bold text-gray-400 mt-1">
                                       {t.timestamp
