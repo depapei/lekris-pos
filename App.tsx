@@ -61,17 +61,11 @@ const App: React.FC = () => {
   const init = async () => {
     try {
       setLoading(true);
-      console.log("Memulai memuat data...");
       const [p, s, h] = await Promise.all([
         api.api.products.getAll(),
         api.api.suppliers.getAll(),
         api.api.transactions.getAll(),
       ]);
-      console.log("Data berhasil dimuat:", {
-        products: p,
-        suppliers: s,
-        history: h,
-      });
       setProducts(Array.isArray(p) ? p : []);
       setSuppliers(Array.isArray(s) ? s : []);
       setHistory(Array.isArray(h) ? h : []);
@@ -119,7 +113,6 @@ const App: React.FC = () => {
           quantity: Number(i.quantity),
         })),
       };
-      console.log("Sending Payload:", JSON.stringify(payload, null, 2));
       await api.api.transactions.insert(payload);
       setCart([]);
       setIsOldCust(false);
@@ -201,7 +194,7 @@ const App: React.FC = () => {
             type="submit"
             className="w-full py-5 bg-orange-600 text-white rounded-xl font-black uppercase text-xs tracking-widest shadow-xl shadow-orange-100 active:scale-95 transition-all disabled:opacity-50"
           >
-            {authLoading ? "Mencoba Masuk..." : "Masuk Ke Sistem"}
+            {authLoading ? "Mencoba Masuk..." : "Login"}
           </button>
         </form>
 
