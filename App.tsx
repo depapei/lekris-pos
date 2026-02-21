@@ -409,7 +409,7 @@ const App: React.FC = () => {
                                     { ...p, quantity: 1, addedAt: Date.now() },
                                   ]);
                               }}
-                              className="w-fit h-12 bg-gray-900 text-white rounded-2xl font-semibold text-sm shadow-lg px-3"
+                              className="w-fit p-3 bg-gray-900 text-white rounded-lg font-semibold text-xs shadow-lg"
                             >
                               Tambahkan +
                             </button>
