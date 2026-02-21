@@ -732,7 +732,6 @@ const App: React.FC = () => {
                                                 await response.blob();
                                               const objectUrl =
                                                 URL.createObjectURL(blob);
-                                              console.log(objectUrl);
                                               setPaymentProofUrl(
                                                 objectUrl || null,
                                               );
