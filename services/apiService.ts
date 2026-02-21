@@ -39,9 +39,10 @@ const request = async (path: string, options: RequestInit = {}) => {
       : result;
   } catch (err: any) {
     console.error("Connection Error:", err);
-    throw new Error(
-      `Backend tidak merespon di ${BASE_URL}${path}. Pastikan server sudah berjalan.`,
-    );
+    // throw new Error(
+    //   `Backend tidak merespon di ${BASE_URL}${path}. Pastikan server sudah berjalan.`,
+    // );
+    throw new Error(`Kesalahan server.`);
   }
 };
 
