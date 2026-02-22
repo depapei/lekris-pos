@@ -436,88 +436,6 @@ const App: React.FC = () => {
 
                 {activeTab === AppTab.CART && (
                   <div className="space-y-6">
-                    {cart.length > 0 && (
-                      <div className="space-y-6">
-                        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
-                          <h3 className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest text-center">
-                            Pembayaran QRIS
-                          </h3>
-                          <div className="relative aspect-square w-48 mx-auto bg-gray-50 rounded-2xl flex items-center justify-center overflow-hidden border-2 border-dashed border-gray-200">
-                            <img
-                              src="https://picsum.photos/seed/qris/400/400"
-                              alt="QRIS Dummy"
-                              className="w-full h-full object-cover opacity-50"
-                              referrerPolicy="no-referrer"
-                            />
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest bg-white/80 px-3 py-1 rounded-full backdrop-blur-sm">
-                                QRIS DUMMY
-                              </span>
-                            </div>
-                          </div>
-                          <p className="text-[9px] text-center text-gray-400 font-bold uppercase tracking-widest">
-                            Silahkan scan QR di atas
-                          </p>
-                        </div>
-
-                        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
-                          <h3 className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">
-                            Upload Bukti Bayar
-                          </h3>
-                          <div className="relative">
-                            <input
-                              type="file"
-                              accept="image/*"
-                              onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) {
-                                  const reader = new FileReader();
-                                  reader.onloadend = () => {
-                                    setPaymentProof(reader.result as string);
-                                  };
-                                  reader.readAsDataURL(file);
-                                }
-                              }}
-                              className="hidden"
-                              id="payment-upload"
-                            />
-                            <label
-                              htmlFor="payment-upload"
-                              className="flex flex-col items-center justify-center w-full p-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 cursor-pointer hover:bg-gray-100 transition-all"
-                            >
-                              {paymentProof ? (
-                                <div className="space-y-4 text-center w-full">
-                                  <div className="w-full aspect-4/3 rounded-xl overflow-hidden shadow-lg border-2 border-white">
-                                    <img
-                                      src={paymentProof}
-                                      alt="Bukti Bayar"
-                                      className="w-full h-full object-contain bg-gray-900"
-                                    />
-                                  </div>
-                                  <div className="flex items-center justify-center space-x-2">
-                                    <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                                    <p className="text-[10px] font-semibold text-emerald-600 uppercase tracking-widest">
-                                      Berhasil Diupload
-                                    </p>
-                                  </div>
-                                  <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">
-                                    Klik untuk ganti foto
-                                  </p>
-                                </div>
-                              ) : (
-                                <div className="text-center space-y-2">
-                                  <span className="text-2xl">📸</span>
-                                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">
-                                    Klik untuk upload
-                                  </p>
-                                </div>
-                              )}
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
                     <div className="bg-gray-50 p-6 rounded-xl space-y-4">
                       <div className="space-y-4">
                         <div className="space-y-2">
@@ -629,6 +547,87 @@ const App: React.FC = () => {
                               </div>
                             </div>
                           ))}
+                      </div>
+                    )}
+
+                    {cart.length > 0 && (
+                      <div className="space-y-6">
+                        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+                          <h3 className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest text-center">
+                            Pembayaran QRIS
+                          </h3>
+                          <div className="relative aspect-square w-48 mx-auto bg-gray-50 rounded-2xl flex items-center justify-center overflow-hidden border-2 border-dashed border-gray-200">
+                            <img
+                              src="https://picsum.photos/seed/qris/400/400"
+                              alt="QRIS Dummy"
+                              className="w-full h-full object-cover opacity-50"
+                              referrerPolicy="no-referrer"
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest bg-white/80 px-3 py-1 rounded-full backdrop-blur-sm">
+                                QRIS DUMMY
+                              </span>
+                            </div>
+                          </div>
+                          <p className="text-[9px] text-center text-gray-400 font-bold uppercase tracking-widest">
+                            Silahkan scan QR di atas
+                          </p>
+                        </div>
+                        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+                          <h3 className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">
+                            Upload Bukti Bayar
+                          </h3>
+                          <div className="relative">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  const reader = new FileReader();
+                                  reader.onloadend = () => {
+                                    setPaymentProof(reader.result as string);
+                                  };
+                                  reader.readAsDataURL(file);
+                                }
+                              }}
+                              className="hidden"
+                              id="payment-upload"
+                            />
+                            <label
+                              htmlFor="payment-upload"
+                              className="flex flex-col items-center justify-center w-full p-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 cursor-pointer hover:bg-gray-100 transition-all"
+                            >
+                              {paymentProof ? (
+                                <div className="space-y-4 text-center w-full">
+                                  <div className="w-full aspect-4/3 rounded-xl overflow-hidden shadow-lg border-2 border-white">
+                                    <img
+                                      src={paymentProof}
+                                      alt="Bukti Bayar"
+                                      className="w-full h-full object-contain bg-gray-900"
+                                    />
+                                  </div>
+                                  <div className="flex items-center justify-center space-x-2">
+                                    <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                                    <p className="text-[10px] font-semibold text-emerald-600 uppercase tracking-widest">
+                                      Berhasil Diupload
+                                    </p>
+                                  </div>
+                                  <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">
+                                    Klik untuk ganti foto
+                                  </p>
+                                </div>
+                              ) : (
+                                <div className="text-center space-y-2">
+                                  <span className="text-2xl">📸</span>
+                                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">
+                                    Klik untuk upload
+                                  </p>
+                                </div>
+                              )}
+                            </label>
+                          </div>
+                        </div>
                         <div className="h-80"></div>{" "}
                         {/* Extra large spacer at the very end to ensure scrollability */}
                       </div>
@@ -659,7 +658,6 @@ const App: React.FC = () => {
                         className="w-full p-4 bg-gray-50 rounded-xl border-none font-bold text-xs shadow-inner focus:ring-2 focus:ring-orange-500 transition-all"
                       />
                     </div>
-
                     {Object.keys(groupedHistory).length === 0 ? (
                       <p className="text-center text-gray-300 py-20 italic font-bold">
                         {filterDate
