@@ -329,12 +329,16 @@ const App: React.FC = () => {
                 <span>🏪</span>
                 <span>Kasir Utama</span>
               </button>
-              {/* <button
+              <button
                 onClick={() => {
                   setView("PRODUCT_MGMT");
                   setIsSidebar(false);
                 }}
-                className={`w-full text-left p-4 rounded-xl font-bold flex items-center space-x-4 transition-all ${view === "PRODUCT_MGMT" ? "bg-orange-600 text-white shadow-lg" : "text-gray-500 hover:bg-gray-50"}`}
+                className={`w-full text-left p-4 rounded-xl font-bold flex items-center space-x-4 transition-all ${
+                  view === "PRODUCT_MGMT"
+                    ? "bg-orange-600 text-white shadow-lg"
+                    : "text-gray-500 hover:bg-gray-50"
+                }`}
               >
                 <span>🍗</span>
                 <span>Kelola Menu</span>
@@ -344,11 +348,15 @@ const App: React.FC = () => {
                   setView("SUPPLIER_MGMT");
                   setIsSidebar(false);
                 }}
-                className={`w-full text-left p-4 rounded-xl font-bold flex items-center space-x-4 transition-all ${view === "SUPPLIER_MGMT" ? "bg-orange-600 text-white shadow-lg" : "text-gray-500 hover:bg-gray-50"}`}
+                className={`w-full text-left p-4 rounded-xl font-bold flex items-center space-x-4 transition-all ${
+                  view === "SUPPLIER_MGMT"
+                    ? "bg-orange-600 text-white shadow-lg"
+                    : "text-gray-500 hover:bg-gray-50"
+                }`}
               >
                 <span>📦</span>
                 <span>Data Supply</span>
-              </button> */}
+              </button>
               <button
                 onClick={handleLogout}
                 className="w-full text-left p-4 rounded-xl font-bold flex items-center space-x-4 text-red-500 hover:bg-red-50 transition-all mt-8"
