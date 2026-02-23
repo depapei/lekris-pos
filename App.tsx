@@ -9,6 +9,7 @@ import {
 } from "./types";
 import * as api from "./services/apiService";
 import { formatRupiah } from "./components/Formatters";
+import imageCompression from "browser-image-compression";
 
 const TabButton: React.FC<{
   active: boolean;
@@ -38,6 +39,7 @@ const App: React.FC = () => {
   const [view, setView] = useState<ViewState>("POS");
   const [isSidebar, setIsSidebar] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [imgLoading, setImgLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const mainRef = useRef<HTMLDivElement>(null);
 
@@ -145,6 +147,47 @@ const App: React.FC = () => {
       alert("Gagal menyimpan pesanan. Periksa koneksi atau data.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    // 1. Validasi Awal
+    if (!file) return;
+
+    // Reset state sebelum proses baru
+    setError("");
+    setImgLoading(true);
+
+    try {
+      // 2. Opsi Kompresi
+      const options = {
+        maxSizeMB: 2, // Target maksimal 2MB
+        maxWidthOrHeight: 1920, // Batasi dimensi agar tidak terlalu besar
+        useWebWorker: true, // Gunakan web worker agar tidak blocking UI thread
+        initialQuality: 0.8, // Mulai dari kualitas 80%
+      };
+
+      // 3. Proses Kompresi (Mengembalikan objek File)
+      const compressedFile = await imageCompression(file, options);
+
+      // 4. Konversi Hasil Kompresi ke Base64
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPaymentProof(reader.result as string);
+        setImgLoading(false); // Selesai
+      };
+      reader.onerror = () => {
+        setError("Gagal membaca file gambar.");
+        setImgLoading(false);
+      };
+      reader.readAsDataURL(compressedFile);
+    } catch (err) {
+      // 5. Error Handling
+      console.error(err);
+      setError("Gagal mengkompresi gambar. Coba lagi.");
+      setImgLoading(false);
     }
   };
 
@@ -581,22 +624,15 @@ const App: React.FC = () => {
                             <input
                               type="file"
                               accept="image/*"
-                              onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) {
-                                  const reader = new FileReader();
-                                  reader.onloadend = () => {
-                                    setPaymentProof(reader.result as string);
-                                  };
-                                  reader.readAsDataURL(file);
-                                }
-                              }}
+                              capture="environment"
+                              onChange={handleImageChange}
                               className="hidden"
                               id="payment-upload"
+                              disabled={imgLoading}
                             />
                             <label
                               htmlFor="payment-upload"
-                              className="flex flex-col items-center justify-center w-full p-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 cursor-pointer hover:bg-gray-100 transition-all"
+                              className={`flex flex-col items-center justify-center w-full p-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 cursor-pointer hover:bg-gray-100 transition-all ${imgLoading && "cursor-not-allowed"}`}
                             >
                               {paymentProof ? (
                                 <div className="space-y-4 text-center w-full">
@@ -614,7 +650,9 @@ const App: React.FC = () => {
                                     </p>
                                   </div>
                                   <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">
-                                    Klik untuk ganti foto
+                                    {imgLoading
+                                      ? "Klik untuk ganti foto"
+                                      : "Memuat gambar..."}
                                   </p>
                                 </div>
                               ) : (
@@ -717,6 +755,9 @@ const App: React.FC = () => {
                                             minute: "2-digit",
                                           })
                                         : "--:--"}
+                                    </p>
+                                    <p className="text-[9px] font-bold text-gray-400 mt-1">
+                                      {t.cashier}
                                     </p>
                                   </div>
                                   <div className="text-right">
