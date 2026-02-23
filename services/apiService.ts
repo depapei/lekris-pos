@@ -22,13 +22,13 @@ const request = async (path: string, options: RequestInit = {}) => {
 
     if (response.status === 401) {
       localStorage.removeItem("auth_token");
-      window.location.reload();
+      // window.location.reload();
     }
 
     if (!response.ok) {
       const errBody = await response.json().catch(() => ({}));
       throw new Error(
-        errBody.message || `Gagal menghubungi backend: ${response.statusText}`,
+        errBody.error || `Gagal menghubungi backend: ${response.statusText}`,
       );
     }
 
@@ -42,7 +42,8 @@ const request = async (path: string, options: RequestInit = {}) => {
     // throw new Error(
     //   `Backend tidak merespon di ${BASE_URL}${path}. Pastikan server sudah berjalan.`,
     // );
-    throw new Error(`Kesalahan server.`);
+
+    throw new Error(err);
   }
 };
 
