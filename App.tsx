@@ -321,7 +321,7 @@ const App: React.FC = () => {
                 <span>🏪</span>
                 <span>Kasir Utama</span>
               </button>
-              <button
+              {/* <button
                 onClick={() => {
                   setView("PRODUCT_MGMT");
                   setIsSidebar(false);
@@ -340,7 +340,7 @@ const App: React.FC = () => {
               >
                 <span>📦</span>
                 <span>Data Supply</span>
-              </button>
+              </button> */}
               <button
                 onClick={handleLogout}
                 className="w-full text-left p-4 rounded-xl font-bold flex items-center space-x-4 text-red-500 hover:bg-red-50 transition-all mt-8"
