@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "tsc --noEmit",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "sync": "npx capacitor-assets generate && npm run build && npx cap sync"
   },
   "dependencies": {
     "@capacitor/android": "^8.1.0",
@@ -19,9 +20,11 @@
     "browser-image-compression": "^2.0.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "react-zoom-pan-pinch": "^3.7.0",
     "tailwindcss": "^4.2.0"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^5.0.0",
     "typescript": "~5.8.2",
