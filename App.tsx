@@ -675,9 +675,7 @@ const App: React.FC = () => {
                                     </p>
                                   </div>
                                   <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest">
-                                    {imgLoading
-                                      ? "Klik untuk ganti foto"
-                                      : "Memuat gambar..."}
+                                    Klik untuk ganti foto
                                   </p>
                                 </div>
                               ) : (
