@@ -27,6 +27,7 @@ export interface Transaction {
   customerName?: string;
   createdBy?: number;
   updatedBy?: number;
+  cashier?: string;
 }
 
 export interface DbConfig {

@@ -757,7 +757,7 @@ const App: React.FC = () => {
                                         : "--:--"}
                                     </p>
                                     <p className="text-[9px] font-bold text-gray-400 mt-1">
-                                      {t.cashier}
+                                      {t.cashier && `Kasir: ${t.cashier}`}
                                     </p>
                                   </div>
                                   <div className="text-right">
