@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Product,
   CartItem,
@@ -223,7 +224,7 @@ const App: React.FC = () => {
     return (
       <div className="flex flex-col h-full max-w-md mx-auto bg-white relative overflow-hidden shadow-2xl justify-center p-10 font-sans">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-semibold italic tracking-tighter text-orange-600">
+          <h1 className="text-4xl font-semibold tracking-tighter bg-orange- text-orange-600">
             LELE KRISPY
           </h1>
           <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mt-2">
@@ -285,97 +286,127 @@ const App: React.FC = () => {
         </form>
 
         <p className="text-center mt-12 text-[11px] text-gray-300 font-bold uppercase tracking-widest">
-          Versi 1.0.0 Build 2024
+          Versi 1.0 Build 2026
         </p>
       </div>
     );
   }
 
+  const sidebarVariants = {
+    open: {
+      width: "18rem",
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 30,
+      },
+    },
+    closed: {
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 30,
+      },
+    },
+  };
+
   return (
     <div className="flex flex-col h-full max-w-md mx-auto bg-white relative overflow-hidden shadow-2xl font-sans">
       {/* Sidebar Navigation */}
-      {isSidebar && (
-        <div
-          className="fixed inset-0 bg-gray-900/60 z-100 backdrop-blur-sm"
-          onClick={() => setIsSidebar(false)}
-        >
-          <div
-            className="absolute left-0 top-0 bottom-0 w-72 bg-white shadow-2xl p-8 flex flex-col pt-safe animate-in slide-in-from-left duration-300"
-            onClick={(e) => e.stopPropagation()}
+      <AnimatePresence>
+        {isSidebar && (
+          <motion.div
+            className="fixed inset-0 bg-gray-900/60 z-100 backdrop-blur-sm"
+            onClick={() => setIsSidebar(false)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
           >
-            <div className="flex justify-between items-center mb-12">
-              <h2 className="text-2xl font-semibold italic text-orange-600 tracking-tighter">
-                Menu
-              </h2>
-              <button
-                onClick={() => setIsSidebar(false)}
-                className="text-gray-300 text-3xl"
-              >
-                &times;
-              </button>
-            </div>
-            <nav className="space-y-3">
-              <button
-                onClick={() => {
-                  setView("POS");
-                  setIsSidebar(false);
-                }}
-                className={`w-full text-left p-4 rounded-xl font-bold flex items-center space-x-4 transition-all ${
-                  view === "POS"
-                    ? "bg-orange-600 text-white shadow-lg"
-                    : "text-gray-500 hover:bg-gray-50"
-                }`}
-              >
-                <span>🏪</span>
-                <span>Kasir Utama</span>
-              </button>
-              <button
-                onClick={() => {
-                  setView("PRODUCT_MGMT");
-                  setIsSidebar(false);
-                }}
-                className={`w-full text-left p-4 rounded-xl font-bold flex items-center space-x-4 transition-all ${
-                  view === "PRODUCT_MGMT"
-                    ? "bg-orange-600 text-white shadow-lg"
-                    : "text-gray-500 hover:bg-gray-50"
-                }`}
-              >
-                <span>🍗</span>
-                <span>Kelola Menu</span>
-              </button>
-              <button
-                onClick={() => {
-                  setView("SUPPLIER_MGMT");
-                  setIsSidebar(false);
-                }}
-                className={`w-full text-left p-4 rounded-xl font-bold flex items-center space-x-4 transition-all ${
-                  view === "SUPPLIER_MGMT"
-                    ? "bg-orange-600 text-white shadow-lg"
-                    : "text-gray-500 hover:bg-gray-50"
-                }`}
-              >
-                <span>📦</span>
-                <span>Data Supply</span>
-              </button>
-              <button
-                onClick={handleLogout}
-                className="w-full text-left p-4 rounded-xl font-bold flex items-center space-x-4 text-red-500 hover:bg-red-50 transition-all mt-8"
-              >
-                <span>🚪</span>
-                <span>Keluar</span>
-              </button>
-            </nav>
-            <div className="mt-auto pt-6 border-t border-gray-100">
-              <p className="text-[12px] text-gray-400 font-bold text-center">
-                Cihuy
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+            <motion.div
+              initial="closed"
+              animate="open"
+              exit="closed"
+              variants={sidebarVariants}
+              className="absolute left-0 top-0 bottom-0 w-72 bg-gray-900 shadow-2xl p-8 flex flex-col pt-safe pb-safe animate-in slide-in-from-left duration-300 transition-all"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-12 mt-4">
+                <h2 className="text-2xl text-orange-600 font-semibold tracking-tighter">
+                  Menu
+                </h2>
+                <button
+                  onClick={() => setIsSidebar(false)}
+                  className="text-gray-300 text-3xl"
+                >
+                  &times;
+                </button>
+              </div>
+              <nav className="space-y-3">
+                <button
+                  onClick={() => {
+                    setView("POS");
+                    setIsSidebar(false);
+                  }}
+                  className={`w-full text-left p-4 rounded-xl font-bold flex items-center space-x-4 transition-all ${
+                    view === "POS"
+                      ? "bg-orange-600 text-white shadow-lg"
+                      : "text-gray-500 bg-gray-800"
+                  }`}
+                >
+                  <span>🏪</span>
+                  <span>Kasir Utama</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setView("PRODUCT_MGMT");
+                    setIsSidebar(false);
+                  }}
+                  className={`w-full text-left p-4 rounded-xl font-bold flex items-center space-x-4 transition-all ${
+                    view === "PRODUCT_MGMT"
+                      ? "bg-orange-600 text-white shadow-lg"
+                      : "text-gray-500 bg-gray-800"
+                  }`}
+                >
+                  <span>🍗</span>
+                  <span>Kelola Menu</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setView("SUPPLIER_MGMT");
+                    setIsSidebar(false);
+                  }}
+                  className={`w-full text-left p-4 rounded-xl font-bold flex items-center space-x-4 transition-all ${
+                    view === "SUPPLIER_MGMT"
+                      ? "bg-orange-600 text-white shadow-lg"
+                      : "text-gray-500 bg-gray-800"
+                  }`}
+                >
+                  <span>📦</span>
+                  <span>Data Supply</span>
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left p-4 rounded-xl font-bold flex items-center space-x-4 text-red-500 bg-gray-800 transition-all mt-8"
+                >
+                  <span>🚪</span>
+                  <span>Keluar</span>
+                </button>
+              </nav>
+              <div className="mt-auto pt-6 border-t border-gray-100 mb-4">
+                <p className="text-[12px] text-gray-400 font-bold text-center">
+                  Copyright © 2026 DAL All Rights Reserved
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* App Header */}
-      <header className="bg-white border-b border-gray-100 p-4 pt-safe flex justify-between items-center z-50">
+      <header className="bg-orange-600 border-b border-gray-100 p-4 pt-safe flex justify-between items-center z-50">
         <button
           onClick={() => setIsSidebar(true)}
           className="p-2 bg-gray-50 rounded-xl text-gray-400"
@@ -395,10 +426,10 @@ const App: React.FC = () => {
           </svg>
         </button>
         <div className="text-center">
-          <h1 className="text-lg font-semibold italic tracking-tighter text-orange-600">
+          <h1 className="text-lg font-semibold tracking-tighter text-gray-50">
             LELE KRISPY
           </h1>
-          <p className="text-[8px] font-bold text-gray-300 uppercase tracking-widest -mt-1">
+          <p className="text-[11px] font-bold text-gray-300 uppercase tracking-widest -mt-1">
             {branch}
           </p>
         </div>
@@ -738,13 +769,13 @@ const App: React.FC = () => {
                         );
                         return (
                           <div key={date} className="space-y-4">
-                            <div className="sticky top-0 bg-white/5 backdrop-blur-md shadow-sm rounded-xl py-3 px-2 z-10 border-b border-gray-50 flex justify-between items-end">
+                            <div className="sticky top-0 bg-white/5 backdrop-blur-md shadow-sm rounded-xl py-3 px-2 z-10 border border-gray-50 flex justify-between items-center">
                               <h2 className="text-[12px] font-semibold text-orange-600 uppercase tracking-widest">
                                 {date}
                               </h2>
                               <div className="text-right">
                                 <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">
-                                  Total Hari Ini
+                                  Total Hari
                                 </p>
                                 <p className="text-xs font-semibold text-gray-900">
                                   {formatRupiah(dailyTotal)}
