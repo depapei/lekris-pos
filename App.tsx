@@ -10,6 +10,7 @@ import {
 import * as api from "./services/apiService";
 import { formatRupiah } from "./components/Formatters";
 import imageCompression from "browser-image-compression";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 const TabButton: React.FC<{
   active: boolean;
@@ -19,7 +20,9 @@ const TabButton: React.FC<{
 }> = ({ active, label, onClick, icon }) => (
   <button
     onClick={onClick}
-    className={`flex flex-col items-center justify-center w-full py-2 transition-all ${active ? "text-orange-600" : "text-gray-400"}`}
+    className={`flex flex-col items-center justify-center w-full py-2 transition-all ${
+      active ? "text-orange-600" : "text-gray-400"
+    }`}
   >
     {icon}
     <span className="text-[10px] mt-1 font-bold uppercase tracking-tight">
@@ -66,6 +69,7 @@ const App: React.FC = () => {
   const [viewPaymentProof, setViewPaymentProof] = useState<Transaction | null>(
     null,
   );
+  const [qrPreview, setQrPreview] = useState<boolean>(false);
   const [paymentProofUrl, setPaymentProofUrl] = useState<string | null>(null);
   const [loadingProof, setLoadingProof] = useState(false);
 
@@ -316,7 +320,11 @@ const App: React.FC = () => {
                   setView("POS");
                   setIsSidebar(false);
                 }}
-                className={`w-full text-left p-4 rounded-xl font-bold flex items-center space-x-4 transition-all ${view === "POS" ? "bg-orange-600 text-white shadow-lg" : "text-gray-500 hover:bg-gray-50"}`}
+                className={`w-full text-left p-4 rounded-xl font-bold flex items-center space-x-4 transition-all ${
+                  view === "POS"
+                    ? "bg-orange-600 text-white shadow-lg"
+                    : "text-gray-500 hover:bg-gray-50"
+                }`}
               >
                 <span>🏪</span>
                 <span>Kasir Utama</span>
@@ -599,16 +607,19 @@ const App: React.FC = () => {
                           <h3 className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest text-center">
                             Pembayaran QRIS
                           </h3>
-                          <div className="relative aspect-square w-48 mx-auto bg-gray-50 rounded-2xl flex items-center justify-center overflow-hidden border-2 border-dashed border-gray-200">
+                          <div
+                            className="relative aspect-square w-48 mx-auto bg-gray-50 rounded-2xl flex items-center justify-center overflow-hidden border-2 border-dashed border-gray-200"
+                            onClick={() => setQrPreview(true)}
+                          >
                             <img
-                              src="https://picsum.photos/seed/qris/400/400"
+                              src="/assets/QRIS.jpg"
                               alt="QRIS Dummy"
                               className="w-full h-full object-cover opacity-50"
                               referrerPolicy="no-referrer"
                             />
                             <div className="absolute inset-0 flex items-center justify-center">
                               <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest bg-white/80 px-3 py-1 rounded-full backdrop-blur-sm">
-                                QRIS DUMMY
+                                Perbesar
                               </span>
                             </div>
                           </div>
@@ -632,16 +643,22 @@ const App: React.FC = () => {
                             />
                             <label
                               htmlFor="payment-upload"
-                              className={`flex flex-col items-center justify-center w-full p-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 cursor-pointer hover:bg-gray-100 transition-all ${imgLoading && "cursor-not-allowed"}`}
+                              className={`flex flex-col items-center justify-center w-full p-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 cursor-pointer hover:bg-gray-100 transition-all ${
+                                imgLoading && "cursor-not-allowed"
+                              }`}
                             >
                               {paymentProof ? (
                                 <div className="space-y-4 text-center w-full">
                                   <div className="w-full aspect-4/3 rounded-xl overflow-hidden shadow-lg border-2 border-white">
-                                    <img
-                                      src={paymentProof}
-                                      alt="Bukti Bayar"
-                                      className="w-full h-full object-contain bg-gray-900"
-                                    />
+                                    <TransformWrapper>
+                                      <TransformComponent>
+                                        <img
+                                          src={paymentProof}
+                                          alt="Bukti Bayar"
+                                          className="w-full h-full object-contain bg-gray-900"
+                                        />
+                                      </TransformComponent>
+                                    </TransformWrapper>
                                   </div>
                                   <div className="flex items-center justify-center space-x-2">
                                     <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
@@ -1403,8 +1420,8 @@ const App: React.FC = () => {
               {loading
                 ? "Memproses..."
                 : !paymentProof
-                  ? "Upload Bukti Bayar"
-                  : "Konfirmasi & Bayar"}
+                ? "Upload Bukti Bayar"
+                : "Konfirmasi & Bayar"}
             </button>
           </div>
         </div>
@@ -1440,11 +1457,15 @@ const App: React.FC = () => {
                   </p>
                 </div>
               ) : paymentProofUrl ? (
-                <img
-                  src={paymentProofUrl}
-                  alt="Bukti Bayar"
-                  className="w-full h-full object-contain"
-                />
+                <TransformWrapper>
+                  <TransformComponent>
+                    <img
+                      src={paymentProofUrl}
+                      alt="Bukti Bayar"
+                      className="w-full h-full object-contain"
+                    />
+                  </TransformComponent>
+                </TransformWrapper>
               ) : (
                 <div className="text-center space-y-2">
                   <span className="text-3xl">🚫</span>
@@ -1458,6 +1479,46 @@ const App: React.FC = () => {
               onClick={() => {
                 setViewPaymentProof(null);
                 setPaymentProofUrl(null);
+              }}
+              className="w-full p-4 bg-gray-900 text-white rounded-xl font-semibold text-[10px] uppercase tracking-widest shadow-lg active:scale-95 transition-all"
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* QR Preview Modal */}
+      {qrPreview && (
+        <div className="fixed inset-0 bg-gray-900/80 z-120 flex items-center justify-center backdrop-blur-md px-4">
+          <div className="bg-white w-full max-w-sm rounded-2xl p-8 space-y-6 shadow-2xl animate-in zoom-in duration-300">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-gray-900 uppercase italic tracking-tighter">
+                Preview QRIS
+              </h3>
+              <button
+                onClick={() => {
+                  setQrPreview(false);
+                }}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="aspect-auto w-full bg-gray-100 rounded-xl overflow-hidden shadow-inner flex items-center justify-center relative">
+              <TransformWrapper>
+                <TransformComponent>
+                  <img
+                    src={"/assets/QRIS.jpg"}
+                    alt="Preview QRIS"
+                    className="w-full h-full object-contain"
+                  />
+                </TransformComponent>
+              </TransformWrapper>
+            </div>
+            <button
+              onClick={() => {
+                setQrPreview(false);
               }}
               className="w-full p-4 bg-gray-900 text-white rounded-xl font-semibold text-[10px] uppercase tracking-widest shadow-lg active:scale-95 transition-all"
             >
