@@ -775,7 +775,7 @@ const App: React.FC = () => {
                               </h2>
                               <div className="text-right">
                                 <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">
-                                  Total Hari
+                                  Total
                                 </p>
                                 <p className="text-xs font-semibold text-gray-900">
                                   {formatRupiah(dailyTotal)}
