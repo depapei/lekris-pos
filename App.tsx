@@ -1064,7 +1064,7 @@ const App: React.FC = () => {
 
       {/* Forms Modal */}
       {(editProd || editSup || editTrx) && (
-        <div className="fixed inset-0 bg-gray-900/80 z-110 flex items-end sm:items-center justify-center pt-safe backdrop-blur-md px-4">
+        <div className="fixed inset-0 bg-gray-900/80 z-110 flex items-end sm:items-center justify-center pt-safe pb-safe backdrop-blur-md px-4">
           <div className="bg-white w-full max-w-sm rounded-xl p-10 space-y-8 shadow-2xl animate-in slide-in-from-bottom duration-300 mb-safe">
             <h3 className="text-xl font-semibold text-gray-900 uppercase italic tracking-tighter">
               {editTrx ? "Edit Transaksi" : "Isi Formulir Data"}
