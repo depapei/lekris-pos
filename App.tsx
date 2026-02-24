@@ -1,17 +1,17 @@
-import imageCompression from "browser-image-compression";
-import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
-import { formatRupiah } from "./components/Formatters";
-import * as api from "./services/apiService";
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  AppTab,
-  CartItem,
   Product,
-  Supplier,
+  CartItem,
   Transaction,
+  AppTab,
+  Supplier,
   ViewState,
 } from "./types";
+import * as api from "./services/apiService";
+import { formatRupiah } from "./components/Formatters";
+import imageCompression from "browser-image-compression";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 const TabButton: React.FC<{
   active: boolean;
@@ -358,6 +358,34 @@ const App: React.FC = () => {
                 >
                   <span>🏪</span>
                   <span>Kasir Utama</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setView("PRODUCT_MGMT");
+                    setIsSidebar(false);
+                  }}
+                  className={`w-full text-left p-4 rounded-xl font-bold flex items-center space-x-4 transition-all ${
+                    view === "PRODUCT_MGMT"
+                      ? "bg-orange-600 text-white shadow-lg"
+                      : "text-gray-500 bg-gray-800"
+                  }`}
+                >
+                  <span>🍗</span>
+                  <span>Kelola Menu</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setView("SUPPLIER_MGMT");
+                    setIsSidebar(false);
+                  }}
+                  className={`w-full text-left p-4 rounded-xl font-bold flex items-center space-x-4 transition-all ${
+                    view === "SUPPLIER_MGMT"
+                      ? "bg-orange-600 text-white shadow-lg"
+                      : "text-gray-500 bg-gray-800"
+                  }`}
+                >
+                  <span>📦</span>
+                  <span>Data Supply</span>
                 </button>
                 <button
                   onClick={handleLogout}
