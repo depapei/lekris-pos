@@ -273,7 +273,6 @@ const App: React.FC = () => {
               className="w-full p-5 bg-gray-50 rounded-xl border-none font-bold text-sm focus:ring-2 focus:ring-orange-500 transition-all"
             >
               <option>Pasar Segar</option>
-              <option>Pondok Jagung</option>
             </select>
           </div>
           <button
