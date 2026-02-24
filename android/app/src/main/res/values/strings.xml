@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">lele-krispy-pos</string>
-    <string name="title_activity_main">lele-krispy-pos</string>
+    <string name="app_name">Lele Krispy</string>
+    <string name="title_activity_main">Lele Krispy</string>
     <string name="package_name">com.lekris.pos</string>
     <string name="custom_url_scheme">com.lekris.pos</string>
 </resources>
