@@ -245,11 +245,11 @@ const App: React.FC = () => {
               onChange={(e) =>
                 setLoginData({ ...loginData, username: e.target.value })
               }
-              className="w-full p-5 bg-gray-50 rounded-xl border-none font-bold text-sm focus:ring-2 focus:ring-orange-500 transition-all"
+              className="w-full p-5 bg-gray-50 rounded-xl border-none font-bold text-sm focus:ring-2 focus:ring-orange-500 transition-all placeholder:text-gray-400"
             />
           </div>
           <div className="space-y-1">
-            <label className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest ml-2">
+            <label className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest ml-2 placeholder:text-gray-400">
               Password
             </label>
             <input
