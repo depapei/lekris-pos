@@ -25,3 +25,5 @@ dist-ssr
 
 lekris-key-store
 lekris-ks
+
+.env
