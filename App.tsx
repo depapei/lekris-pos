@@ -88,7 +88,7 @@ const App: React.FC = () => {
       const [p, s, h] = await Promise.all([
         api.api.products.getAll(),
         api.api.suppliers.getAll(),
-        api.api.transactions.getAll(),
+        api.api.transactions.getAll(branch),
       ]);
       setProducts(Array.isArray(p) ? p : []);
       setSuppliers(Array.isArray(s) ? s : []);
