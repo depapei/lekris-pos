@@ -54,7 +54,7 @@ const App: React.FC = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
 
   // UI State
-  const [branch, setBranch] = useState("Pasar Segar");
+  const [branch, setBranch] = useState<string>("");
   const [isOldCust, setIsOldCust] = useState(false);
   const [qProd, setQProd] = useState("");
   const [qMgmtProd, setQMgmtProd] = useState("");
@@ -88,7 +88,7 @@ const App: React.FC = () => {
       const [p, s, h] = await Promise.all([
         api.api.products.getAll(),
         api.api.suppliers.getAll(),
-        api.api.transactions.getAll(),
+        api.api.transactions.getAll(branch),
       ]);
       setProducts(Array.isArray(p) ? p : []);
       setSuppliers(Array.isArray(s) ? s : []);
@@ -103,15 +103,22 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
+    const b = localStorage.getItem("user_branch");
+    setBranch(b ? b : "");
     if (isAuthenticated) init();
   }, [isAuthenticated]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    const { username, password } = loginData;
     try {
       setAuthLoading(true);
-      await api.auth.login(loginData.username, loginData.password);
-      setIsAuthenticated(true);
+      const isLogin = await api.auth.login(username, password);
+      if (isLogin) {
+        setIsAuthenticated(true);
+      } else {
+        throw "Login gagal";
+      }
     } catch (err: any) {
       alert(err.message || "Login gagal");
     } finally {
@@ -196,6 +203,12 @@ const App: React.FC = () => {
     }
   };
 
+  const handleBranchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const v = e.target.value;
+    setBranch(v);
+    localStorage.setItem("user_branch", v);
+  };
+
   const groupedHistory = useMemo(() => {
     const groups: { [k: string]: Transaction[] } = {};
     if (!Array.isArray(history)) return groups;
@@ -243,7 +256,10 @@ const App: React.FC = () => {
               placeholder="admin"
               value={loginData.username}
               onChange={(e) =>
-                setLoginData({ ...loginData, username: e.target.value })
+                setLoginData({
+                  ...loginData,
+                  username: e.target.value.toLowerCase(),
+                })
               }
               className="w-full p-5 bg-gray-50 rounded-xl border-none font-bold text-sm focus:ring-2 focus:ring-orange-500 transition-all placeholder:text-gray-400"
             />
@@ -268,12 +284,14 @@ const App: React.FC = () => {
               Cabang
             </label>
             <select
+              required
               value={branch}
-              onChange={(e) => setBranch(e.target.value)}
+              onChange={(e) => handleBranchChange(e)}
               className="w-full p-5 bg-gray-50 rounded-xl border-none font-bold text-sm focus:ring-2 focus:ring-orange-500 transition-all"
             >
-              <option>Pasar Segar</option>
-              <option>Pondok Jagung</option>
+              <option value="">Pilih Cabang</option>
+              <option value="Pasar Segar">Pasar Segar</option>
+              <option value="Pondok Jagung">Pondok Jagung</option>
             </select>
           </div>
           <button
@@ -701,6 +719,16 @@ const App: React.FC = () => {
 
                 {activeTab === AppTab.HISTORY && (
                   <div className="space-y-6">
+                    <div className="px-2">
+                      <button
+                        onClick={() => {
+                          init();
+                        }}
+                        className={`w-full`}
+                      >
+                        Refresh
+                      </button>
+                    </div>
                     <div className="px-2">
                       <div className="flex justify-between items-center mb-2">
                         <label className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest ml-1">
