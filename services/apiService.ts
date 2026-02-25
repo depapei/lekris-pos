@@ -3,14 +3,14 @@ import { Product, Supplier, Transaction } from "../types";
 /**
  * REST API SERVICE
  */
-export const BASE_URL = "https://Api-mini-pos.daltek.id/api";
-// export const BASE_URL = "http://localhost:3000";
+// export const BASE_URL = "https://Api-mini-pos.daltek.id/api";
+export const BASE_URL = "http://localhost:8080/api";
 
-const request = async (path: string, options: RequestInit = {}) => {
+const request = async (path: string, options: RequestInit = {}, params?: string) => {
   try {
     const token = localStorage.getItem("auth_token");
     // Ensure path ends with a slash to avoid CORS issues
-    const normalizedPath = path.endsWith("/") ? path : `${path}/`;
+    const normalizedPath = params ? `${path}/?${params}` : path.endsWith("/") ? path : `${path}/`;
 
     const response = await fetch(`${BASE_URL}${normalizedPath}`, {
       ...options,
@@ -101,7 +101,7 @@ export const api = {
     delete: (id: any) => request(`/supplies/${id}`, { method: "DELETE" }),
   },
   transactions: {
-    getAll: () => request("/transactions"),
+    getAll: (branchName: string) => request(`/transactions`, {}, `branchname=${branchName}`),
     getById: (id: string) => request(`/transactions/${id}`),
     save: (t: Transaction) => {
       if (t.id)
