@@ -83,12 +83,13 @@ const App: React.FC = () => {
   }, [activeTab]);
 
   const init = async () => {
+    const b = localStorage.getItem("user_branch");
     try {
       setLoading(true);
       const [p, s, h] = await Promise.all([
         api.api.products.getAll(),
         api.api.suppliers.getAll(),
-        api.api.transactions.getAll(branch),
+        api.api.transactions.getAll(branch ? branch : b),
       ]);
       setProducts(Array.isArray(p) ? p : []);
       setSuppliers(Array.isArray(s) ? s : []);
