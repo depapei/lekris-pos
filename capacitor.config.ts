@@ -1,14 +1,15 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: "com.lekris.pos",
+  appId: "com.lelekrispy.app",
   appName: "Lele Krispy",
   webDir: "dist",
   plugins: {
-    CapacitorHttp: {
-      enabled: true,
+    SystemBars: {
+      animation: "FADE",
+      hidden: false,
     },
-  }
+  },
 };
 
 export default config;

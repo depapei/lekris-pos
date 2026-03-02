@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import imageCompression from "browser-image-compression";
+import { AnimatePresence, motion } from "framer-motion";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
+import { formatRupiah } from "./components/Formatters";
+import * as api from "./services/apiService";
 import {
-  Product,
-  CartItem,
-  Transaction,
   AppTab,
+  CartItem,
+  Product,
   Supplier,
+  Transaction,
   ViewState,
 } from "./types";
-import * as api from "./services/apiService";
-import { formatRupiah } from "./components/Formatters";
-import imageCompression from "browser-image-compression";
-import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 const TabButton: React.FC<{
   active: boolean;
@@ -54,8 +54,9 @@ const App: React.FC = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
 
   // UI State
-  const [branch, setBranch] = useState("Pasar Segar");
+  const [branch, setBranch] = useState<string>("");
   const [isOldCust, setIsOldCust] = useState(false);
+  const [isCash, setIsCash] = useState(false);
   const [qProd, setQProd] = useState("");
   const [qMgmtProd, setQMgmtProd] = useState("");
   const [qMgmtSup, setQMgmtSup] = useState("");
@@ -83,12 +84,13 @@ const App: React.FC = () => {
   }, [activeTab]);
 
   const init = async () => {
+    const b = localStorage.getItem("user_branch");
     try {
       setLoading(true);
       const [p, s, h] = await Promise.all([
         api.api.products.getAll(),
         api.api.suppliers.getAll(),
-        api.api.transactions.getAll(branch),
+        api.api.transactions.getAll(branch ? branch : b),
       ]);
       setProducts(Array.isArray(p) ? p : []);
       setSuppliers(Array.isArray(s) ? s : []);
@@ -103,15 +105,22 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
+    const b = localStorage.getItem("user_branch");
+    setBranch(b ? b : "");
     if (isAuthenticated) init();
   }, [isAuthenticated]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    const { username, password } = loginData;
     try {
       setAuthLoading(true);
-      await api.auth.login(loginData.username, loginData.password);
-      setIsAuthenticated(true);
+      const isLogin = await api.auth.login(username, password);
+      if (isLogin) {
+        setIsAuthenticated(true);
+      } else {
+        throw "Login gagal";
+      }
     } catch (err: any) {
       alert(err.message || "Login gagal");
     } finally {
@@ -196,6 +205,12 @@ const App: React.FC = () => {
     }
   };
 
+  const handleBranchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const v = e.target.value;
+    setBranch(v);
+    localStorage.setItem("user_branch", v);
+  };
+
   const groupedHistory = useMemo(() => {
     const groups: { [k: string]: Transaction[] } = {};
     if (!Array.isArray(history)) return groups;
@@ -243,7 +258,10 @@ const App: React.FC = () => {
               placeholder="admin"
               value={loginData.username}
               onChange={(e) =>
-                setLoginData({ ...loginData, username: e.target.value })
+                setLoginData({
+                  ...loginData,
+                  username: e.target.value.toLowerCase(),
+                })
               }
               className="w-full p-5 bg-gray-50 rounded-xl border-none font-bold text-sm focus:ring-2 focus:ring-orange-500 transition-all placeholder:text-gray-400"
             />
@@ -268,12 +286,14 @@ const App: React.FC = () => {
               Cabang
             </label>
             <select
+              required
               value={branch}
-              onChange={(e) => setBranch(e.target.value)}
+              onChange={(e) => handleBranchChange(e)}
               className="w-full p-5 bg-gray-50 rounded-xl border-none font-bold text-sm focus:ring-2 focus:ring-orange-500 transition-all"
             >
-              <option>Pasar Segar</option>
-              <option>Pondok Jagung</option>
+              <option value="">Pilih Cabang</option>
+              <option value="Pasar Segar">Pasar Segar</option>
+              <option value="Pondok Jagung">Pondok Jagung</option>
             </select>
           </div>
           <button
@@ -546,7 +566,7 @@ const App: React.FC = () => {
                             id="oc"
                             checked={isOldCust}
                             onChange={(e) => setIsOldCust(e.target.checked)}
-                            className="w-5 h-5 text-orange-600 rounded-md focus:ring-orange-500 border-none bg-white shadow-sm"
+                            className="w-5 h-5 text-orange-600 rounded-md focus:ring-orange-500 accent-gray-900 border-none bg-white shadow-sm"
                           />
                           <label
                             htmlFor="oc"
@@ -670,55 +690,72 @@ const App: React.FC = () => {
                           <h3 className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest">
                             Upload Bukti Bayar
                           </h3>
-                          <div className="relative">
+                          <div className="flex items-center space-x-3 px-1">
                             <input
-                              type="file"
-                              accept="image/*"
-                              capture="environment"
-                              onChange={handleImageChange}
-                              className="hidden"
-                              id="payment-upload"
-                              disabled={imgLoading}
+                              type="checkbox"
+                              id="oc"
+                              checked={isCash}
+                              onChange={(e) => setIsCash(e.target.checked)}
+                              className="w-5 h-5 text-orange-600 rounded-md focus:ring-orange-500 accent-gray-900 border-none bg-white shadow-sm"
                             />
                             <label
-                              htmlFor="payment-upload"
-                              className={`flex flex-col items-center justify-center w-full p-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 cursor-pointer hover:bg-gray-100 transition-all ${
-                                imgLoading && "cursor-not-allowed"
-                              }`}
+                              htmlFor="oc"
+                              className="text-xs font-bold text-gray-600"
                             >
-                              {paymentProof ? (
-                                <div className="space-y-4 text-center w-full">
-                                  <div className="w-full aspect-4/3 rounded-xl overflow-hidden shadow-lg border-2 border-white">
-                                    <TransformWrapper>
-                                      <TransformComponent>
-                                        <img
-                                          src={paymentProof}
-                                          alt="Bukti Bayar"
-                                          className="w-full h-full object-contain bg-gray-900"
-                                        />
-                                      </TransformComponent>
-                                    </TransformWrapper>
-                                  </div>
-                                  <div className="flex items-center justify-center space-x-2">
-                                    <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                                    <p className="text-[12px] font-semibold text-emerald-600 uppercase tracking-widest">
-                                      Berhasil Diupload
-                                    </p>
-                                  </div>
-                                  <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest">
-                                    Klik untuk ganti foto
-                                  </p>
-                                </div>
-                              ) : (
-                                <div className="text-center space-y-2">
-                                  <span className="text-2xl">📸</span>
-                                  <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest">
-                                    Klik untuk upload
-                                  </p>
-                                </div>
-                              )}
+                              Pembayaran Tunai
                             </label>
                           </div>
+                          {!isCash && (
+                            <div className="relative">
+                              <input
+                                type="file"
+                                accept="image/*"
+                                capture="environment"
+                                onChange={handleImageChange}
+                                className="hidden"
+                                id="payment-upload"
+                                disabled={imgLoading}
+                              />
+                              <label
+                                htmlFor="payment-upload"
+                                className={`flex flex-col items-center justify-center w-full p-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 cursor-pointer hover:bg-gray-100 transition-all ${
+                                  imgLoading && "cursor-not-allowed"
+                                }`}
+                              >
+                                {paymentProof ? (
+                                  <div className="space-y-4 text-center w-full">
+                                    <div className="w-full aspect-4/3 rounded-xl overflow-hidden shadow-lg border-2 border-white">
+                                      <TransformWrapper>
+                                        <TransformComponent>
+                                          <img
+                                            src={paymentProof}
+                                            alt="Bukti Bayar"
+                                            className="w-full h-full object-contain bg-gray-900"
+                                          />
+                                        </TransformComponent>
+                                      </TransformWrapper>
+                                    </div>
+                                    <div className="flex items-center justify-center space-x-2">
+                                      <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                                      <p className="text-[12px] font-semibold text-emerald-600 uppercase tracking-widest">
+                                        Berhasil Diupload
+                                      </p>
+                                    </div>
+                                    <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest">
+                                      Klik untuk ganti foto
+                                    </p>
+                                  </div>
+                                ) : (
+                                  <div className="text-center space-y-2">
+                                    <span className="text-2xl">📸</span>
+                                    <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest">
+                                      Klik untuk upload
+                                    </p>
+                                  </div>
+                                )}
+                              </label>
+                            </div>
+                          )}
                         </div>
                         <div className="h-80"></div>{" "}
                         {/* Extra large spacer at the very end to ensure scrollability */}
@@ -729,6 +766,16 @@ const App: React.FC = () => {
 
                 {activeTab === AppTab.HISTORY && (
                   <div className="space-y-6">
+                    <div className="px-2">
+                      <button
+                        onClick={() => {
+                          init();
+                        }}
+                        className={`w-full`}
+                      >
+                        Refresh
+                      </button>
+                    </div>
                     <div className="px-2">
                       <div className="flex justify-between items-center mb-2">
                         <label className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest ml-1">
@@ -1444,11 +1491,13 @@ const App: React.FC = () => {
             </div>
             <button
               onClick={handleCheckout}
-              disabled={loading || !paymentProof}
+              disabled={loading || isCash ? false : !paymentProof}
               className="w-full py-4 bg-gray-900 text-white rounded-xl font-semibold uppercase tracking-widest text-xs active:scale-95 transition-all shadow-xl disabled:opacity-50"
             >
               {loading
                 ? "Memproses..."
+                : isCash
+                ? "Konfirmasi & Bayar"
                 : !paymentProof
                 ? "Upload Bukti Bayar"
                 : "Konfirmasi & Bayar"}
