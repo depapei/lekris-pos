@@ -28,6 +28,7 @@ export interface Transaction {
   createdBy?: number;
   updatedBy?: number;
   cashier?: string;
+  paymentMethod?: string;
 }
 
 export interface DbConfig {
