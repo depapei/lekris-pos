@@ -898,9 +898,14 @@ const App: React.FC = () => {
                                       }
                                     }}
                                     className="text-gray-600 bg-gray-50 border border-gray-200 rounded px-2 py-1 transition-colors text-sm flex items-center space-x-1"
+                                    disabled={t.paymentMethod === "CASH"}
                                     title="Lihat Bukti Pembayaran"
                                   >
-                                    <span>Bukti Bayar</span>
+                                    {t.paymentMethod === "CASH" ? (
+                                      <span>Pembayaran Tunai</span>
+                                    ) : (
+                                      <span>Bukti Bayar</span>
+                                    )}
                                   </button>
                                   <button
                                     onClick={() => {
