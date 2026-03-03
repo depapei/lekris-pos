@@ -643,7 +643,7 @@ const App: React.FC = () => {
                             onClick={() => setQrPreview(true)}
                           >
                             <img
-                              src="/assets/QRIS.jpg"
+                              src="/assets/QRIS.jpeg"
                               alt="QRIS Dummy"
                               className="w-full h-full object-cover opacity-50"
                               referrerPolicy="no-referrer"
@@ -1560,7 +1560,7 @@ const App: React.FC = () => {
               <TransformWrapper>
                 <TransformComponent>
                   <img
-                    src={"/assets/QRIS.jpg"}
+                    src={"/assets/QRIS.jpeg"}
                     alt="Preview QRIS"
                     className="w-full h-full object-contain"
                   />
