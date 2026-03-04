@@ -26,7 +26,7 @@ const TabButton: React.FC<{
     }`}
   >
     {icon}
-    <span className="text-[12px] mt-1 font-bold uppercase tracking-tight">
+    <span className="text-[15px] mt-1 font-bold uppercase tracking-tight">
       {label}
     </span>
   </button>
@@ -242,14 +242,14 @@ const App: React.FC = () => {
           <h1 className="text-4xl font-semibold tracking-tighter bg-orange- text-orange-600">
             LELE KRISPY
           </h1>
-          <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mt-2">
+          <p className="text-[15px] font-bold text-gray-400 uppercase tracking-widest mt-2">
             Sistem Kasir & Inventaris
           </p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-1">
-            <label className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest ml-2">
+            <label className="text-[15px] font-semibold text-gray-400 uppercase tracking-widest ml-2">
               Username
             </label>
             <input
@@ -267,7 +267,7 @@ const App: React.FC = () => {
             />
           </div>
           <div className="space-y-1">
-            <label className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest ml-2 placeholder:text-gray-400">
+            <label className="text-[15px] font-semibold text-gray-400 uppercase tracking-widest ml-2 placeholder:text-gray-400">
               Password
             </label>
             <input
@@ -282,7 +282,7 @@ const App: React.FC = () => {
             />
           </div>
           <div className="space-y-1">
-            <label className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest ml-2">
+            <label className="text-[15px] font-semibold text-gray-400 uppercase tracking-widest ml-2">
               Cabang
             </label>
             <select
@@ -305,7 +305,7 @@ const App: React.FC = () => {
           </button>
         </form>
 
-        <p className="text-center mt-12 text-[11px] text-gray-300 font-bold uppercase tracking-widest">
+        <p className="text-center mt-12 text-[14px] text-gray-300 font-bold uppercase tracking-widest">
           Versi 1.0 Build 2026
         </p>
       </div>
@@ -416,7 +416,7 @@ const App: React.FC = () => {
                 </button>
               </nav>
               <div className="mt-auto pt-6 border-t border-gray-100 mb-4">
-                <p className="text-[12px] text-gray-400 font-bold text-center">
+                <p className="text-[15px] text-gray-400 font-bold text-center">
                   Copyright © 2026 DAL All Rights Reserved
                 </p>
               </div>
@@ -449,7 +449,7 @@ const App: React.FC = () => {
           <h1 className="text-lg font-semibold tracking-tighter text-gray-50">
             LELE KRISPY
           </h1>
-          <p className="text-[11px] font-bold text-gray-300 uppercase tracking-widest -mt-1">
+          <p className="text-[14px] font-bold text-gray-300 uppercase tracking-widest -mt-1">
             {branch}
           </p>
         </div>
@@ -464,7 +464,7 @@ const App: React.FC = () => {
         {loading ? (
           <div className="flex flex-col items-center justify-center h-full space-y-3">
             <div className="w-8 h-8 border-2 border-orange-200 border-t-orange-600 rounded-full animate-spin"></div>
-            <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest">
+            <p className="text-[15px] font-bold text-gray-400 uppercase tracking-widest">
               Memuat data toko...
             </p>
           </div>
@@ -507,10 +507,10 @@ const App: React.FC = () => {
                             className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center active:scale-[0.98] transition-all group"
                           >
                             <div>
-                              <h3 className="font-semibold text-gray-800 uppercase text-xs tracking-tighter">
+                              <h3 className="font-semibold text-gray-800 uppercase text-sm tracking-tighter">
                                 {p.item || "Tanpa Nama"}
                               </h3>
-                              <p className="font-semibold text-gray-600 uppercase text-[12px] tracking-tighter">
+                              <p className="font-semibold text-gray-600 uppercase text-[15px] tracking-tighter">
                                 {p.description || ""}
                               </p>
                               <p className="text-orange-600 font-bold text-xs mt-1">
@@ -549,7 +549,7 @@ const App: React.FC = () => {
                     <div className="bg-gray-50 p-6 rounded-xl space-y-4">
                       <div className="space-y-4">
                         <div className="space-y-2">
-                          <label className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest ml-1">
+                          <label className="text-[14px] font-semibold text-gray-400 uppercase tracking-widest ml-1">
                             Nama Customer (Opsional)
                           </label>
                           <input
@@ -587,7 +587,7 @@ const App: React.FC = () => {
                     ) : (
                       <div className="space-y-4">
                         <div className="flex justify-between items-center px-2">
-                          <h3 className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest">
+                          <h3 className="text-[15px] font-semibold text-gray-400 uppercase tracking-widest">
                             Daftar Item
                           </h3>
                           <button
@@ -595,7 +595,7 @@ const App: React.FC = () => {
                               if (confirm("Hapus semua item di keranjang?"))
                                 setCart([]);
                             }}
-                            className="text-[12px] font-semibold text-red-500 uppercase tracking-widest hover:text-red-700 transition-colors"
+                            className="text-[15px] font-semibold text-red-500 uppercase tracking-widest hover:text-red-700 transition-colors"
                           >
                             Hapus Semua
                           </button>
@@ -611,7 +611,7 @@ const App: React.FC = () => {
                                 <p className="font-bold text-gray-800 text-xs uppercase">
                                   {i.item || "Tanpa Nama"}
                                 </p>
-                                <p className="text-[12px] font-medium text-gray-400">
+                                <p className="text-[15px] font-medium text-gray-400">
                                   {formatRupiah(i.price || 0)}
                                 </p>
                               </div>
@@ -663,7 +663,7 @@ const App: React.FC = () => {
                     {cart.length > 0 && (
                       <div className="space-y-6">
                         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
-                          <h3 className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest text-center">
+                          <h3 className="text-[15px] font-semibold text-gray-400 uppercase tracking-widest text-center">
                             Pembayaran QRIS
                           </h3>
                           <div
@@ -677,17 +677,17 @@ const App: React.FC = () => {
                               referrerPolicy="no-referrer"
                             />
                             <div className="absolute inset-0 flex items-center justify-center">
-                              <span className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest bg-white/80 px-3 py-1 rounded-full backdrop-blur-sm">
+                              <span className="text-[15px] font-semibold text-gray-400 uppercase tracking-widest bg-white/80 px-3 py-1 rounded-full backdrop-blur-sm">
                                 Perbesar
                               </span>
                             </div>
                           </div>
-                          <p className="text-[11px] text-center text-gray-400 font-bold uppercase tracking-widest">
+                          <p className="text-[14px] text-center text-gray-400 font-bold uppercase tracking-widest">
                             Silahkan scan QR di atas
                           </p>
                         </div>
                         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
-                          <h3 className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest">
+                          <h3 className="text-[15px] font-semibold text-gray-400 uppercase tracking-widest">
                             Upload Bukti Bayar
                           </h3>
                           <div className="flex items-center space-x-3 px-1">
@@ -700,7 +700,7 @@ const App: React.FC = () => {
                             />
                             <label
                               htmlFor="oc"
-                              className="text-xs font-bold text-gray-600"
+                              className="text-xs font-bold text-gray-600 text-[15px]"
                             >
                               Pembayaran Tunai
                             </label>
@@ -737,18 +737,18 @@ const App: React.FC = () => {
                                     </div>
                                     <div className="flex items-center justify-center space-x-2">
                                       <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                                      <p className="text-[12px] font-semibold text-emerald-600 uppercase tracking-widest">
+                                      <p className="text-[15px] font-semibold text-emerald-600 uppercase tracking-widest">
                                         Berhasil Diupload
                                       </p>
                                     </div>
-                                    <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest">
+                                    <p className="text-[14px] text-gray-400 font-bold uppercase tracking-widest">
                                       Klik untuk ganti foto
                                     </p>
                                   </div>
                                 ) : (
                                   <div className="text-center space-y-2">
                                     <span className="text-2xl">📸</span>
-                                    <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest">
+                                    <p className="text-[15px] font-semibold text-gray-400 uppercase tracking-widest">
                                       Klik untuk upload
                                     </p>
                                   </div>
@@ -778,13 +778,13 @@ const App: React.FC = () => {
                     </div>
                     <div className="px-2">
                       <div className="flex justify-between items-center mb-2">
-                        <label className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest ml-1">
+                        <label className="text-[15px] font-semibold text-gray-400 uppercase tracking-widest ml-1">
                           Filter Tanggal
                         </label>
                         {filterDate && (
                           <button
                             onClick={() => setFilterDate("")}
-                            className="text-[12px] font-bold text-orange-600 uppercase tracking-widest"
+                            className="text-[15px] font-bold text-orange-600 uppercase tracking-widest"
                           >
                             Reset
                           </button>
@@ -817,7 +817,7 @@ const App: React.FC = () => {
                         return (
                           <div key={date} className="space-y-4">
                             <div className="sticky top-0 bg-white/5 backdrop-blur-md shadow-sm rounded-xl py-3 px-2 z-10 border border-gray-50 flex justify-between items-center">
-                              <h2 className="text-[12px] font-semibold text-orange-600 uppercase tracking-widest">
+                              <h2 className="text-[15px] font-semibold text-orange-600 uppercase tracking-widest">
                                 {date}
                               </h2>
                               <div className="text-right">
@@ -841,13 +841,13 @@ const App: React.FC = () => {
                                 )}
                                 <div className="flex justify-between items-start border-b border-gray-50 mt-2 mb-4">
                                   <div className="space-y-2">
-                                    <p className="font-bold text-gray-800 uppercase text-[12px] tracking-tight">
+                                    <p className="font-bold text-gray-800 uppercase text-[15px] tracking-tight">
                                       {t.branchName}
                                     </p>
-                                    <p className="font-bold text-gray-400 uppercase text-[12px] tracking-tight">
+                                    <p className="font-bold text-gray-400 uppercase text-[15px] tracking-tight">
                                       {t.customerName}
                                     </p>
-                                    <p className="text-[11px] font-bold text-gray-400 mt-1">
+                                    <p className="text-[14px] font-bold text-gray-400 mt-1">
                                       {t.timestamp
                                         ? new Date(
                                             t.timestamp,
@@ -857,7 +857,7 @@ const App: React.FC = () => {
                                           })
                                         : "--:--"}
                                     </p>
-                                    <p className="text-[11px] font-bold text-gray-400 mt-1">
+                                    <p className="text-[14px] font-bold text-gray-400 mt-1">
                                       {t.cashier && `Kasir: ${t.cashier}`}
                                     </p>
                                   </div>
@@ -979,7 +979,7 @@ const App: React.FC = () => {
                                     ).map((i: any) => (
                                       <p
                                         key={i.id}
-                                        className="text-[12px] font-medium text-gray-500 flex justify-between"
+                                        className="text-[15px] font-medium text-gray-500 flex justify-between"
                                       >
                                         <span>
                                           {i.item || "Item"} × {i.quantity || 0}
@@ -1014,7 +1014,7 @@ const App: React.FC = () => {
                     onClick={() =>
                       setEditProd({ item: "", description: "", price: 0 })
                     }
-                    className="bg-orange-600 text-white px-5 py-3 rounded-xl font-semibold text-[12px] uppercase shadow-lg shadow-orange-100"
+                    className="bg-orange-600 text-white px-5 py-3 rounded-xl font-semibold text-[15px] uppercase shadow-lg shadow-orange-100"
                   >
                     + Tambah
                   </button>
@@ -1081,7 +1081,7 @@ const App: React.FC = () => {
                   </h2>
                   <button
                     onClick={() => setEditSup({ name: "", unit: "" })}
-                    className="bg-gray-900 text-white px-5 py-3 rounded-xl font-semibold text-[12px] uppercase shadow-lg shadow-gray-100"
+                    className="bg-gray-900 text-white px-5 py-3 rounded-xl font-semibold text-[15px] uppercase shadow-lg shadow-gray-100"
                   >
                     + Tambah
                   </button>
@@ -1111,14 +1111,14 @@ const App: React.FC = () => {
                           <h3 className="font-semibold text-gray-800 uppercase text-xs">
                             {s.name}
                           </h3>
-                          <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mt-1">
+                          <p className="text-[15px] font-bold text-gray-400 uppercase tracking-widest mt-1">
                             Satuan: {s.unit}
                           </p>
                         </div>
                         <div className="flex space-x-2">
                           <button
                             onClick={() => setEditSup(s)}
-                            className="p-3 text-gray-300 font-bold text-[12px] uppercase hover:text-orange-600"
+                            className="p-3 text-gray-300 font-bold text-[15px] uppercase hover:text-orange-600"
                           >
                             Edit
                           </button>
@@ -1129,7 +1129,7 @@ const App: React.FC = () => {
                                 init();
                               }
                             }}
-                            className="p-3 text-gray-300 font-bold text-[12px] uppercase hover:text-red-600"
+                            className="p-3 text-gray-300 font-bold text-[15px] uppercase hover:text-red-600"
                           >
                             Hapus
                           </button>
@@ -1203,7 +1203,7 @@ const App: React.FC = () => {
                     </label>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest ml-2">
+                    <label className="text-[14px] font-semibold text-gray-400 uppercase tracking-widest ml-2">
                       Nama Customer
                     </label>
                     <input
@@ -1278,7 +1278,7 @@ const App: React.FC = () => {
               {editTrx && (
                 <div className="space-y-5 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest ml-2">
+                    <label className="text-[14px] font-semibold text-gray-400 uppercase tracking-widest ml-2">
                       Daftar Item Belanja
                     </label>
                     <div className="space-y-2">
@@ -1288,10 +1288,10 @@ const App: React.FC = () => {
                           className="flex justify-between items-center bg-gray-50 p-4 rounded-xl border border-gray-100"
                         >
                           <div className="flex-1">
-                            <p className="text-[12px] font-semibold text-gray-800 uppercase leading-none mb-1">
+                            <p className="text-[15px] font-semibold text-gray-800 uppercase leading-none mb-1">
                               {item.item}
                             </p>
-                            <p className="text-[11px] font-bold text-orange-600">
+                            <p className="text-[14px] font-bold text-orange-600">
                               {formatRupiah(item.price)}
                             </p>
                           </div>
@@ -1344,7 +1344,7 @@ const App: React.FC = () => {
                       ))}
 
                       <div className="space-y-3 pt-4 border-t border-gray-100">
-                        <label className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest ml-2">
+                        <label className="text-[14px] font-semibold text-gray-400 uppercase tracking-widest ml-2">
                           Tambah Menu Lain
                         </label>
                         <div className="space-y-2">
@@ -1379,10 +1379,10 @@ const App: React.FC = () => {
                                 className="w-full flex justify-between items-center bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:border-orange-200 transition-all text-left group"
                               >
                                 <div className="flex-1">
-                                  <p className="text-[12px] font-semibold text-gray-800 uppercase leading-none mb-1 group-hover:text-orange-600 transition-colors">
+                                  <p className="text-[15px] font-semibold text-gray-800 uppercase leading-none mb-1 group-hover:text-orange-600 transition-colors">
                                     {p.item}
                                   </p>
-                                  <p className="text-[11px] font-bold text-gray-400">
+                                  <p className="text-[14px] font-bold text-gray-400">
                                     {formatRupiah(p.price)}
                                   </p>
                                 </div>
@@ -1397,7 +1397,7 @@ const App: React.FC = () => {
                                 (i) => String(i.product_id) === String(p.id),
                               ),
                           ).length === 0 && (
-                            <p className="text-[11px] text-center text-gray-300 font-bold italic uppercase py-4">
+                            <p className="text-[14px] text-center text-gray-300 font-bold italic uppercase py-4">
                               Semua menu sudah ditambahkan
                             </p>
                           )}
@@ -1408,7 +1408,7 @@ const App: React.FC = () => {
 
                   <div className="pt-4 border-t border-gray-100">
                     <div className="flex justify-between items-center mb-4 px-2">
-                      <span className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest">
+                      <span className="text-[15px] font-semibold text-gray-400 uppercase tracking-widest">
                         Total Akhir
                       </span>
                       <span className="text-xl font-semibold text-orange-600">
@@ -1426,13 +1426,13 @@ const App: React.FC = () => {
                     setEditSup(null);
                     setEditTrx(null);
                   }}
-                  className="flex-1 py-5 bg-gray-100 text-gray-400 rounded-xl font-bold uppercase text-[12px] tracking-widest"
+                  className="flex-1 py-5 bg-gray-100 text-gray-400 rounded-xl font-bold uppercase text-[15px] tracking-widest"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
-                  className="flex-[1.5] py-5 bg-orange-600 text-white rounded-xl font-semibold uppercase text-[12px] tracking-widest shadow-xl active:scale-95 transition-all"
+                  className="flex-[1.5] py-5 bg-orange-600 text-white rounded-xl font-semibold uppercase text-[15px] tracking-widest shadow-xl active:scale-95 transition-all"
                 >
                   Simpan Data
                 </button>
@@ -1450,11 +1450,11 @@ const App: React.FC = () => {
             className="w-full bg-gray-900 text-white p-5 rounded-xl shadow-2xl flex justify-between items-center group active:scale-95 transition-all border border-white/10 pointer-events-auto animate-in fade-in slide-in-from-bottom-4 duration-300"
           >
             <div className="flex items-center space-x-4">
-              <div className="bg-orange-600 text-white text-[12px] font-semibold w-7 h-7 rounded-lg flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+              <div className="bg-orange-600 text-white text-[15px] font-semibold w-7 h-7 rounded-lg flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                 {cart.reduce((s, i) => s + i.quantity, 0)}
               </div>
               <div className="text-left">
-                <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">
+                <p className="text-[15px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">
                   Total Pesanan
                 </p>
                 <p className="text-xs font-semibold uppercase tracking-tighter">
@@ -1479,7 +1479,7 @@ const App: React.FC = () => {
           <div className="bg-orange-600 p-6 rounded-xl text-white shadow-2xl border border-white/20 pointer-events-auto animate-in fade-in slide-in-from-bottom-4 duration-300">
             <div className="flex justify-between items-center mb-4">
               <div className="flex flex-col">
-                <span className="text-[11px] font-bold uppercase opacity-70 tracking-widest">
+                <span className="text-[14px] font-bold uppercase opacity-70 tracking-widest">
                   Total Pembayaran
                 </span>
                 <span className="text-2xl font-semibold">
@@ -1489,7 +1489,7 @@ const App: React.FC = () => {
                 </span>
               </div>
               <div className="text-right">
-                <span className="text-[12px] font-bold opacity-70 uppercase tracking-widest">
+                <span className="text-[15px] font-bold opacity-70 uppercase tracking-widest">
                   {cart.reduce((s, i) => s + i.quantity, 0)} Item
                 </span>
               </div>
@@ -1536,7 +1536,7 @@ const App: React.FC = () => {
               {loadingProof ? (
                 <div className="flex flex-col items-center space-y-3">
                   <div className="w-8 h-8 border-4 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
-                  <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest">
+                  <p className="text-[15px] font-semibold text-gray-400 uppercase tracking-widest">
                     Memuat...
                   </p>
                 </div>
@@ -1553,7 +1553,7 @@ const App: React.FC = () => {
               ) : (
                 <div className="text-center space-y-2">
                   <span className="text-3xl">🚫</span>
-                  <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest">
+                  <p className="text-[15px] font-semibold text-gray-400 uppercase tracking-widest">
                     Tidak ada bukti bayar
                   </p>
                 </div>
@@ -1564,7 +1564,7 @@ const App: React.FC = () => {
                 setViewPaymentProof(null);
                 setPaymentProofUrl(null);
               }}
-              className="w-full p-4 bg-gray-900 text-white rounded-xl font-semibold text-[12px] uppercase tracking-widest shadow-lg active:scale-95 transition-all"
+              className="w-full p-4 bg-gray-900 text-white rounded-xl font-semibold text-[15px] uppercase tracking-widest shadow-lg active:scale-95 transition-all"
             >
               Tutup
             </button>
@@ -1604,7 +1604,7 @@ const App: React.FC = () => {
               onClick={() => {
                 setQrPreview(false);
               }}
-              className="w-full p-4 bg-gray-900 text-white rounded-xl font-semibold text-[12px] uppercase tracking-widest shadow-lg active:scale-95 transition-all"
+              className="w-full p-4 bg-gray-900 text-white rounded-xl font-semibold text-[15px] uppercase tracking-widest shadow-lg active:scale-95 transition-all"
             >
               Tutup
             </button>
@@ -1655,7 +1655,7 @@ const App: React.FC = () => {
                   />
                 </svg>
                 {cart.length > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-orange-600 text-white text-[11px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-white font-semibold">
+                  <span className="absolute -top-2 -right-2 bg-orange-600 text-white text-[14px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-white font-semibold">
                     {cart.length}
                   </span>
                 )}
