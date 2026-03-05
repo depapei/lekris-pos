@@ -1,4 +1,5 @@
 import imageCompression from "browser-image-compression";
+import dayjs from "dayjs";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
@@ -7,6 +8,7 @@ import * as api from "./services/apiService";
 import {
   AppTab,
   CartItem,
+  InputDate,
   Product,
   Supplier,
   Transaction,
@@ -63,6 +65,10 @@ const App: React.FC = () => {
   const [filterDate, setFilterDate] = useState("");
   const [paymentProof, setPaymentProof] = useState<string | null>(null);
   const [customerName, setCustomerName] = useState("");
+  const [inputDate, setInputDate] = useState<InputDate>({
+    string: dayjs().format("YYYY-MM-DDTHH:mm"),
+    format: dayjs().format("YYYY-MM-DD HH:mm:ss.SSSZ"),
+  });
 
   // Modals
   const [editProd, setEditProd] = useState<Product | null>(null);
@@ -82,6 +88,13 @@ const App: React.FC = () => {
       });
     }
   }, [activeTab]);
+
+  const fnResetInputDate = () => {
+    setInputDate({
+      string: dayjs().format("YYYY-MM-DDTHH:mm"),
+      format: dayjs().format("YYYY-MM-DD HH:mm:ss.SSSZ"),
+    });
+  };
 
   const init = async () => {
     const b = localStorage.getItem("user_branch");
@@ -148,12 +161,14 @@ const App: React.FC = () => {
           product_id: Number(i.id),
           quantity: Number(i.quantity),
         })),
+        inputDate: String(inputDate.format),
       };
       await api.api.transactions.insert(payload);
       setCart([]);
       setIsOldCust(false);
       setPaymentProof(null);
       setCustomerName("");
+      fnResetInputDate();
       await init();
       setActiveTab(AppTab.HISTORY);
     } catch (err: any) {
@@ -548,6 +563,39 @@ const App: React.FC = () => {
                   <div className="space-y-6">
                     <div className="bg-gray-50 p-6 rounded-xl space-y-4">
                       <div className="space-y-4">
+                        <div className="space-y">
+                          <div className="flex justify-between items-center mb-2">
+                            <label className="text-[15px] font-semibold text-gray-400 uppercase tracking-widest ml-1">
+                              Tanggal Input
+                            </label>
+                            {inputDate.string && (
+                              <button
+                                onClick={() => fnResetInputDate()}
+                                className="text-[15px] font-bold text-orange-600 uppercase tracking-widest"
+                              >
+                                Sekarang
+                              </button>
+                            )}
+                          </div>
+                          <input
+                            type="datetime-local"
+                            placeholder="Masukan tanggal input..."
+                            value={inputDate.string}
+                            onChange={(e) => {
+                              const value = dayjs(e.target.value);
+                              const ds =
+                                dayjs(value).format("YYYY-MM-DDTHH:mm");
+                              const df = dayjs(value).format(
+                                "YYYY-MM-DD HH:mm:ss.SSSZ",
+                              );
+                              setInputDate({
+                                string: ds,
+                                format: df,
+                              });
+                            }}
+                            className="w-full p-4 bg-white rounded-xl border-none font-bold text-xs shadow-sm focus:ring-2 focus:ring-orange-500 transition-all"
+                          />
+                        </div>
                         <div className="space-y-2">
                           <label className="text-[14px] font-semibold text-gray-400 uppercase tracking-widest ml-1">
                             Nama Customer (Opsional)
@@ -1638,7 +1686,10 @@ const App: React.FC = () => {
           <TabButton
             active={activeTab === AppTab.CART}
             label="Pesanan"
-            onClick={() => setActiveTab(AppTab.CART)}
+            onClick={() => {
+              fnResetInputDate();
+              setActiveTab(AppTab.CART);
+            }}
             icon={
               <div className="relative">
                 <svg

@@ -29,6 +29,7 @@ export interface Transaction {
   updatedBy?: number;
   cashier?: string;
   paymentMethod?: string;
+  inputDate?: string;
 }
 
 export interface DbConfig {
@@ -43,3 +44,8 @@ export enum AppTab {
 }
 
 export type ViewState = "POS" | "SUPPLIER_MGMT" | "PRODUCT_MGMT" | "DB_CONFIG";
+
+export interface InputDate {
+  string: string;
+  format: string;
+}
