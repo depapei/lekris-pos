@@ -526,7 +526,7 @@ const App: React.FC = () => {
                           </label>
                           <input
                             type="text"
-                            placeholder="Masukkan nama customer..."
+                            placeholder="Masukan nama customer..."
                             value={customerName}
                             onChange={(e) => setCustomerName(e.target.value)}
                             className="w-full p-4 bg-white rounded-xl border-none font-bold text-xs shadow-sm focus:ring-2 focus:ring-orange-500 transition-all"
