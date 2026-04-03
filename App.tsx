@@ -3,13 +3,14 @@ import dayjs from "dayjs";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
-import { formatRupiah } from "./components/Formatters";
+import { formatRupiah, formatToISO } from "./components/Formatters";
 import * as api from "./services/apiService";
 import {
   AppTab,
   CartItem,
   InputDate,
   Product,
+  ProductUsage,
   Supplier,
   Transaction,
   ViewState,
@@ -77,6 +78,9 @@ const App: React.FC = () => {
   const [viewPaymentProof, setViewPaymentProof] = useState<Transaction | null>(
     null,
   );
+  const [viewProductUsage, setViewProductUsage] = useState<string>("");
+  const [productUsage, setProductUsage] = useState<ProductUsage[] | null>(null);
+  const [loadingProductUsage, setLoadingProductUsage] = useState(false);
   const [qrPreview, setQrPreview] = useState<boolean>(false);
   const [paymentProofUrl, setPaymentProofUrl] = useState<string | null>(null);
   const [loadingProof, setLoadingProof] = useState(false);
@@ -122,6 +126,10 @@ const App: React.FC = () => {
     setBranch(b ? b : "");
     if (isAuthenticated) init();
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    console.log(productUsage);
+  }, [productUsage]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -247,6 +255,7 @@ const App: React.FC = () => {
       if (!groups[d]) groups[d] = [];
       groups[d].push(t);
     });
+
     return groups;
   }, [history, filterDate]);
 
@@ -864,7 +873,30 @@ const App: React.FC = () => {
                         );
                         return (
                           <div key={date} className="space-y-4">
-                            <div className="sticky top-0 bg-white/5 backdrop-blur-md shadow-sm rounded-xl py-3 px-2 z-10 border border-gray-50 flex justify-between items-center">
+                            <div
+                              className={
+                                "sticky top-0 bg-white/5 backdrop-blur-md shadow-sm rounded-xl py-3 px-2 z-10 border border-gray-50 flex justify-between items-center"
+                              }
+                              onClick={async () => {
+                                const formattedDate = formatToISO(date);
+                                try {
+                                  const p =
+                                    await api.api.transactions.getProductUsage(
+                                      formattedDate,
+                                    );
+                                  setLoadingProductUsage(true);
+                                  setViewProductUsage(date);
+                                  setProductUsage(p);
+                                } catch (error) {
+                                  console.log(
+                                    error,
+                                    "Error fetching product usage",
+                                  );
+                                } finally {
+                                  setLoadingProductUsage(false);
+                                }
+                              }}
+                            >
                               <h2 className="text-[15px] font-semibold text-orange-600 uppercase tracking-widest">
                                 {date}
                               </h2>
@@ -1611,6 +1643,60 @@ const App: React.FC = () => {
               onClick={() => {
                 setViewPaymentProof(null);
                 setPaymentProofUrl(null);
+              }}
+              className="w-full p-4 bg-gray-900 text-white rounded-xl font-semibold text-[15px] uppercase tracking-widest shadow-lg active:scale-95 transition-all"
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Product usage modal */}
+      {viewProductUsage && (
+        <div className="fixed inset-0 bg-gray-900/80 z-120 flex items-center justify-center backdrop-blur-md px-4">
+          <div className="bg-white w-full max-w-sm rounded-2xl p-8 space-y-6 shadow-2xl animate-in zoom-in duration-300">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-gray-900 uppercase italic tracking-tighter">
+                Produk yang digunakan pada tanggal {viewProductUsage}
+              </h3>
+              <button
+                onClick={() => {
+                  setViewProductUsage(false);
+                }}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="aspect-auto w-full bg-gray-100 rounded-xl overflow-hidden justify-start">
+              {loadingProductUsage ? (
+                <div className="flex flex-col items-center space-y-3">
+                  <div className="w-8 h-8 border-4 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-[15px] font-semibold text-gray-400 uppercase tracking-widest">
+                    Memuat...
+                  </p>
+                </div>
+              ) : productUsage.length > 0 ? (
+                <>
+                  {productUsage.map((p, idx) => (
+                    <div>
+                      {idx + 1}. {p.item} x{p.total}
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <div className="text-center space-y-2">
+                  <span className="text-3xl">🚫</span>
+                  <p className="text-[15px] font-semibold text-gray-400 uppercase tracking-widest">
+                    Tidak ada penggunaan produk
+                  </p>
+                </div>
+              )}
+            </div>
+            <button
+              onClick={() => {
+                setViewProductUsage(false);
               }}
               className="w-full p-4 bg-gray-900 text-white rounded-xl font-semibold text-[15px] uppercase tracking-widest shadow-lg active:scale-95 transition-all"
             >

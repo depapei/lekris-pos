@@ -123,6 +123,8 @@ export const api = {
         body: JSON.stringify(t),
       });
     },
+    getProductUsage: (date: string) =>
+      request(`/transactions/product-usage`, {}, `date=${date}`),
     insert: (t: Transaction) =>
       request("/transactions", { method: "POST", body: JSON.stringify(t) }),
     delete: (id: any) => request(`/transactions/${id}`, { method: "DELETE" }),

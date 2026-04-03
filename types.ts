@@ -32,6 +32,11 @@ export interface Transaction {
   inputDate?: string;
 }
 
+export interface ProductUsage {
+  items: string;
+  total: number;
+}
+
 export interface DbConfig {
   url: string;
   key: string;
