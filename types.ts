@@ -33,7 +33,7 @@ export interface Transaction {
 }
 
 export interface ProductUsage {
-  items: string;
+  item: string;
   total: number;
 }
 

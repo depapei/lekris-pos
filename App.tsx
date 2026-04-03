@@ -883,6 +883,7 @@ const App: React.FC = () => {
                                   const p =
                                     await api.api.transactions.getProductUsage(
                                       formattedDate,
+                                      branch,
                                     );
                                   setLoadingProductUsage(true);
                                   setViewProductUsage(date);
